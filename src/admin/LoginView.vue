@@ -17,12 +17,12 @@
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                <form>
+                <form @submit.prevent="handleSignIn">
                     <div>
                         <label for="email"
                             class="block text-sm font-medium leading-5  text-gray-700 font-koulen">អុីម៉ែល</label>
                         <div class="mt-1 relative rounded-md shadow-sm">
-                            <input id="email" name="email" required placeholder="***@gmail.com" type="email" value=""
+                            <input id="email" name="email" v-model="email" required placeholder="***@gmail.com" type="email" value=""
                                 class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5">
                             <div class=" absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
 
@@ -34,7 +34,7 @@
                         <label for="password"
                             class="block text-sm font-medium leading-5 text-gray-700 font-koulen">ពាក្យសម្ងាត់</label>
                         <div class="mt-1 rounded-md shadow-sm">
-                            <input id="password" placeholder="********" required name="password" type="password"
+                            <input id="password" placeholder="********" v-model="password" required name="password" type="password"
                                 class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5">
                         </div>
                     </div>
@@ -63,7 +63,8 @@
                                     <path d="m6 17 5-5-5-5" />
                                     <path d="m13 17 5-5-5-5" />
                                 </svg>
-                                <span>ចូលប្រើប្រាស់</span>
+                                <span v-if="!isLoading">ចូលប្រើប្រាស់</span>
+                                <span v-else>កំពុងចូលប្រើប្រាស់...</span>
                             </button>
                         </span>
                     </div>
@@ -73,3 +74,45 @@
         </div>
     </div>
 </template>
+
+<script>
+import { ref } from 'vue';
+import useSignin from '@/firebase/useLogin';
+import { handleMessageError } from '@/message';
+import { useRouter } from 'vue-router';
+
+export default {
+    setup() {
+        const email = ref("")
+        const password = ref("")
+        const isLoading = ref(false)
+        const router = useRouter();
+
+        const { signIn } = useSignin()
+
+        const handleSignIn = async () => {
+            isLoading.value = true
+            try {
+                const res = await signIn(email.value, password.value)
+                if (res) {
+                    router.push({name: 'admin'})
+                }
+                else {
+                    handleMessageError("សូមពិនិត្យមើលអ៊ីម៉ែលនិងពាក្យសម្ងាត់ម្តង់ទៀត! មិនត្រឹមត្រូវ")
+                }
+            }
+            catch (err) {
+                console.log(err)
+                
+            }
+            finally{
+                isLoading.value = false
+            }
+
+        }
+
+        return { email, password, handleSignIn, isLoading }
+    }
+}
+
+</script>
