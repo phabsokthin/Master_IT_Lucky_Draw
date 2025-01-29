@@ -74,6 +74,8 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  linkExactActiveClass: 'bg-gray-100 h-10 hover:text-black',
+
 });
 
 export default router;

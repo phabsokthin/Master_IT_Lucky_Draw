@@ -1,8 +1,9 @@
 <template>
 
     <!-- Bottom-Right Corner -->
+   
     <div class="fixed bottom-4 right-4">
-        <button @click="handleLogout" class="bg-red-500 hover:bg-red-600 text-white font-bold p-3 rounded-full shadow-lg">
+        <button @click="handleLogout" class="p-3 font-bold text-white bg-red-500 rounded-full shadow-lg hover:bg-red-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="lucide lucide-log-out">

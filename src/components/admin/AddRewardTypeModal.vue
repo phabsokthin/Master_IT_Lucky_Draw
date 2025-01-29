@@ -207,26 +207,23 @@ export default {
         // };
 
         const handleDelete = async (id) => {
-  try {
-    if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
-      if (id) {
-        // Check if the rewardType has associated rewards before deleting
-        const hasNoAssociatedRewards = await checkRewardTypeExist(id, 'rewardTypes');
+            try {
+                if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
+                    if (id) {
+                        const hasNoAssociatedRewards = await checkRewardTypeExist(id, 'rewardTypes');
 
-        if (hasNoAssociatedRewards) {
-          // No associated rewards, safe to delete
-          await deleteDocs(id);
-          handleMessageSuccess("បានលុបប្រភេទរង្វាន់ដោយជោគជ័យ");
-        } else {
-          // Associated rewards exist, show a message to the user
-          handleMessageError("អ្នកមិនអាចលុបប្រភេទរង្វាន់នេះបានទេ។ មានរង្វាន់ដែលពាក់ព័ន្ធជាមួយវា។");
-        }
-      }
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
+                        if (hasNoAssociatedRewards) {
+                            await deleteDocs(id);
+                            handleMessageSuccess("បានលុបប្រភេទរង្វាន់ដោយជោគជ័យ");
+                        } else {
+                            handleMessageError("អ្នកមិនអាចលុបប្រភេទរង្វាន់នេះបានទេ។ មានរង្វាន់ដែលពាក់ព័ន្ធជាមួយវា។");
+                        }
+                    }
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
 
 
 

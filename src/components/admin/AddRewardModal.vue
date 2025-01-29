@@ -81,21 +81,15 @@
                             </button>
                         </span>
 
-
                         <span class="flex w-full mt-3 space-x-2 rounded-md shadow-sm sm:mt-0 sm:w-auto">
                             <button type="button" @click="handleClose"
                                 class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
                                 បោះបង់
                             </button>
-                            <!-- <button type="button" @click="handleReset"
-                                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
-                                ជម្រះ
-                            </button> -->
+
                         </span>
                     </div>
                 </form>
-
-
 
             </div>
 
@@ -115,8 +109,9 @@ import getCollection from '@/firebase/getCollection';
 import { handleMessageSuccess } from '@/message';
 import { timestamp } from '@/config/config';
 import useDoument from '@/firebase/useDocument';
-import { watch } from 'vue';
+import { onMounted } from 'vue';
 export default {
+    props: ['rewardTypeId', 'itemData',],
     setup(props, { emit }) {
         const rewardNo = ref(0);
         const description = ref("");
@@ -130,15 +125,23 @@ export default {
         const btnEdit = ref(false);
 
 
-        watch(rewardType, (type) => {
-            console.log(type)
+        onMounted(() => {
+            if (props.itemData) {
+                rewardNo.value = props.itemData.rewardNo;
+                description.value = props.itemData.rewardDescription;
+                rewardType.value = props.itemData.rewardType;
+                rewardValue.value = props.itemData.rewardValue;
+                qty.value = props.itemData.qty;
+                btnEdit.value = true;
+            }
         })
+
 
 
         const handleSubmit = async () => {
             isLoading.value = true;
             try {
-                const { addDocs } = useDoument("rewardTypes",rewardType.value, "rewards");
+                const { addDocs } = useDoument("rewardTypes", rewardType.value, "rewards");
 
                 const data = {
                     rewardNo: rewardNo.value,
@@ -149,11 +152,21 @@ export default {
                     createdAt: timestamp()
                 };
 
+                if (props.itemData) {
+                    const { updateDocs } = useDoument("rewardTypes", props.rewardTypeId, "rewards");
+                    await updateDocs(props.itemData.id, data);
+                    handleMessageSuccess("បានកែប្រែប្រភេទរង្វាន់ដោយជោគជ័យ!");
+                    handleClose();
+                    handleReset();
+                }
+                else {
 
-                await addDocs(data);
-                handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
-                handleClose();
-                handleReset();
+                    await addDocs(data);
+                    handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
+                    handleClose();
+                    handleReset();
+                }
+
             } catch (err) {
                 console.error("Error submitting data:", err);
             } finally {
@@ -175,7 +188,7 @@ export default {
             qty.value = 0;
         };
 
-        
+
 
 
         return {

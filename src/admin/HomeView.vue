@@ -56,7 +56,7 @@
                             <span class="font-koulen">សិស្សផ្សងសំណាង</span>
                         </RouterLink>
                     </li>
-                   
+
                     <li class="block">
                         <RouterLink :to="{ name: 'dashboard' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 font-koulen'">
@@ -89,8 +89,32 @@
             </div>
         </div>
 
-       <SignOutComponent/>
+        <div>
+            <div class="fixed bottom-4 right-16">
+                <button @click="handleCurrentComponent('CalandarComponent')"
+                    class="p-3 font-bold text-white bg-green-500 rounded-full shadow-lg hover:bg-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-calendar-days">
+                        <path d="M8 2v4" />
+                        <path d="M16 2v4" />
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <path d="M3 10h18" />
+                        <path d="M8 14h.01" />
+                        <path d="M12 14h.01" />
+                        <path d="M16 14h.01" />
+                        <path d="M8 18h.01" />
+                        <path d="M12 18h.01" />
+                        <path d="M16 18h.01" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <SignOutComponent />
     </div>
+
+    <component :is="currentComponent" @close="currentComponent = ''" />
 </template>
 
 <script>
@@ -98,22 +122,32 @@ import { ref } from 'vue';
 import CurrentDate from '@/components/admin/CurrentDate.vue';
 import getUser from '@/firebase/getUser'
 import SignOutComponent from '@/components/admin/SignOut.vue'
+import CalandarComponent from '@/components/admin/CalandarComponent.vue'
+
 export default {
     components: {
         CurrentDate,
-        SignOutComponent
+        SignOutComponent,
+        CalandarComponent
     },
     setup() {
+        const currentComponent = ref("")
         const isSidebarOpen = ref(false);
-        const {user} = getUser();
+        const { user } = getUser();
         const toggleSidebar = () => {
             isSidebarOpen.value = !isSidebarOpen.value;
         };
 
+        const handleCurrentComponent = (component) => {
+            currentComponent.value = component;
+        };  
+
         return {
             isSidebarOpen,
             toggleSidebar,
-            user
+            user,
+            currentComponent,
+            handleCurrentComponent
         };
     }
 };

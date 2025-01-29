@@ -22,7 +22,7 @@
                             <label class="sr-only">Search</label>
                             <input v-model="search" type="text" name="hs-table-with-pagination-search"
                                 id="hs-table-with-pagination-search"
-                                class="block w-full px-3 py-2 text-sm border shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                class="block w-full px-3 py-2 text-sm border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
                                 placeholder="ស្វែងរក...">
                             <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
                                 <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -82,7 +82,8 @@
 
                                             <div class="flex gap-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="text-orange-500 size-5">
+                                                    stroke-width="1.5" stroke="currentColor"
+                                                    class="text-orange-500 size-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
                                                 </svg>
@@ -119,9 +120,9 @@
                                         </td>
                                         <td>
                                             <div class="flex justify-end pr-2 space-x-2">
-                                                <button
+                                                <button @click="handleDelete(rewardType.id, rewards.id)"
                                                     class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
-                                                <button
+                                                <button @click="handleUpdate(rewardType.id, rewards)"
                                                     class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
                                             </div>
                                         </td>
@@ -153,21 +154,26 @@
             </div>
         </div>
     </div>
-    <component :is="currentComponent" @close="currentComponent = ''" />
+
+    <component :is="currentComponent" @close="currentComponent = ''" :rewardTypeId="rewardTypeId"
+        :itemData="itemData" />
 </template>
 
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useFirestoreCollection, useSubcollection } from '@/firebase/getSubcollection';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { projectFirestore } from '@/config/config';
 import AddRewardModal from '@/components/admin/AddRewardModal.vue';
-import AddRewardTypeModal from '@/components/admin/AddRewardTypeModal.vue'; 
+import AddRewardTypeModal from '@/components/admin/AddRewardTypeModal.vue';
+import useDocument from '@/firebase/useDocument';
+import { handleMessageSuccess } from '@/message';
 
 export default {
     components: {
         AddRewardModal,
-        AddRewardTypeModal
+        AddRewardTypeModal,
+
     },
     setup() {
         const rewardDocs = ref([]);
@@ -177,6 +183,8 @@ export default {
         let unsubscribeRewardTypes = null;
         const rewardUnsubscribers = [];
         const search = ref("");
+        const itemData = ref("");
+        const rewardTypeId = ref("");
 
         // Pagination state
         const currentPage = ref(1);
@@ -195,6 +203,8 @@ export default {
             rewardUnsubscribers.forEach((unsubscribe) => unsubscribe());
         });
 
+
+        //fetct data real-time
         const fetchReward = () => {
             const orderByField = 'rewardNo';
 
@@ -207,7 +217,10 @@ export default {
                     fetchSubcollection();
 
                     const unsubscribe = onSnapshot(
-                        collection(projectFirestore, `rewardTypes/${reward.id}/rewards`),
+                        query(
+                            collection(projectFirestore, `rewardTypes/${reward.id}/rewards`),
+                            orderBy("createdAt", "desc")
+                        ),
                         (snapshot) => {
                             const updatedRewards = snapshot.docs.map((doc) => ({
                                 id: doc.id,
@@ -236,7 +249,6 @@ export default {
         };
 
         // Search logic
-
         const filteredRewardDocs = computed(() => {
             const lowerSearch = search.value.toLowerCase();
             return rewardDocs.value.filter((rewardDoc) => {
@@ -278,9 +290,32 @@ export default {
 
         const handleAddReward = (component) => {
             currentComponent.value = component;
+            itemData.value = null;
+            rewardTypeId.value = null
         };
 
-        
+        const handleUpdate = (rewardType, item) => {
+            currentComponent.value = 'AddRewardModal';
+            rewardTypeId.value = rewardType
+            itemData.value = item
+
+
+        };
+
+        //handle delete
+        const handleDelete = async (itemType, id) => {
+            try {
+                const { deleteDocs } = useDocument('rewardTypes', itemType, 'rewards');
+                if (id) {
+                    if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
+                        await deleteDocs(id);
+                        handleMessageSuccess("បានលុបរង្វាន់ដោយជោគជ័យ");
+                    }
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
 
         return {
             rewardDocs,
@@ -292,7 +327,11 @@ export default {
             goToPage,
             handleAddReward,
             currentComponent,
-            search
+            search,
+            handleDelete,
+            handleUpdate,
+            itemData,
+            rewardTypeId
         };
     },
 };
