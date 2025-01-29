@@ -12,47 +12,21 @@
 
                 <form @submit.prevent="handleSubmit" class="">
                     <div class="my-4">
-                        <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតរង្វាន់ថ្មី
+                        <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតវគ្គសិក្សា
                         </div>
                     </div>
                     <div class="w-full">
 
                         <div class="space-y-1">
-                            <label for="" class="font-koulen">លេខរង្វាន់: *</label>
-                            <input required v-model="rewardNo" min="0" type="text"
+                            <label for="" class="font-koulen">ឈ្មោះវគ្គសិក្សា: *</label>
+                            <input required v-model="courseName" type="text"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="លេខរង្វាន់">
+                                placeholder="ឈ្មោះវគ្គសិក្សា">
                         </div>
-
-                        <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">ប្រភេទរង្វាន់: *</label>
-                            <select required v-model="rewardType"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm">
-                                <option selected disabled value="">--ជ្រើសរើស--</option>
-                                <option v-for="types in rewardTypesDoc" :key="types.id" :value="types.id">
-                                    {{ types.rewardType }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">តម្លៃរង្វាន់(%): *</label>
-                            <input required v-model="rewardValue" type="text"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="តម្លៃរង្វាន់">
-                        </div>
-
-                        <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">ចំនួន: *</label>
-                            <input required v-model="qty" min="0" type="number"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="ចំនួន">
-                        </div>
-
 
                         <div class="mt-2 space-y-1">
                             <label for="" class="font-koulen">ពិពណ៌នា</label>
-                            <textarea v-model="description" rows="5" type="text"
+                            <textarea v-model="courseDescription" rows="5" type="text"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
                                 placeholder="ពិពណ៌នា"></textarea>
                         </div>
@@ -81,15 +55,17 @@
                             </button>
                         </span>
 
+
                         <span class="flex w-full mt-3 space-x-2 rounded-md shadow-sm sm:mt-0 sm:w-auto">
                             <button type="button" @click="handleClose"
                                 class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
                                 បោះបង់
                             </button>
-
+                           
                         </span>
                     </div>
                 </form>
+
 
             </div>
 
@@ -104,76 +80,66 @@
 
 <script>
 import { ref } from 'vue';
-
+import useCollection from '@/firebase/useCollection';
+import {  handleMessageSuccess } from '@/message';
 import getCollection from '@/firebase/getCollection';
-import { handleMessageSuccess } from '@/message';
 import { timestamp } from '@/config/config';
-import useDoument from '@/firebase/useDocument';
 import { onMounted } from 'vue';
-export default {
-    props: ['rewardTypeId', 'itemData',],
-    setup(props, { emit }) {
-        const rewardNo = ref(0);
-        const description = ref("");
-        const rewardType = ref("");
+// import checkcourseNameExist from '@/firebase/checkcourseNameExist'
 
-        const rewardValue = ref("");
-        const qty = ref(0);
+export default {
+    props: ['courseDetail'],
+    setup(props, { emit }) {
+        const courseName = ref("");
+        const courseDescription = ref("");
+        const selectedId = ref(null); // Track the ID of the reward type being edited
+
+        const { addcDocs, updateDocs } = useCollection("courses");
         const isLoading = ref(false);
 
-        const { document: rewardTypesDoc } = getCollection("rewardTypes");
+        const { document: courseNamesDoc } = getCollection("courses");
         const btnEdit = ref(false);
 
 
-        onMounted(() => {
-            if (props.itemData) {
-                rewardNo.value = props.itemData.rewardNo;
-                description.value = props.itemData.rewardDescription;
-                rewardType.value = props.itemData.rewardType;
-                rewardValue.value = props.itemData.rewardValue;
-                qty.value = props.itemData.qty;
+        onMounted(() =>{
+            if(props.courseDetail){
+                courseName.value = props.courseDetail.courseName;
+                courseDescription.value = props.courseDetail.courseDescription;
                 btnEdit.value = true;
             }
         })
 
-
-
         const handleSubmit = async () => {
             isLoading.value = true;
             try {
-                const { addDocs } = useDoument("rewardTypes", rewardType.value, "rewards");
-
                 const data = {
-                    rewardNo: rewardNo.value,
-                    rewardType: rewardType.value,
-                    rewardDescription: description.value,
-                    rewardValue: rewardValue.value,
-                    qty: qty.value,
+                    courseName: courseName.value.toLocaleLowerCase().trim(),
+                    courseDescription: courseDescription.value,
                     createdAt: timestamp()
                 };
 
-                if (props.itemData) {
-                    const { updateDocs } = useDoument("rewardTypes", props.rewardTypeId, "rewards");
-                    await updateDocs(props.itemData.id, data);
-                    handleMessageSuccess("បានកែប្រែរង្វាន់ដោយជោគជ័យ!");
-                    handleClose();
-                    handleReset();
+                if (btnEdit.value) {
+                   
+                    await updateDocs(props.courseDetail.id, data);
+                    handleMessageSuccess("បានកែប្រែដោយជោគជ័យ!"); 
+                   
+                } else {
+                    
+                    await addcDocs(data);
+                    handleMessageSuccess("បានបង្កើតវគ្គសិក្សាដោយជោគជ័យ!");
+                   
                 }
-                else {
-
-                    await addDocs(data);
-                    handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
-                    handleClose();
-                    handleReset();
-                }
-
+                emit('close')
+                
+                handleReset();
             } catch (err) {
-                console.error("Error submitting data:", err);
+                console.log(err);
             } finally {
                 isLoading.value = false;
             }
         };
 
+    
 
 
         const handleClose = () => {
@@ -181,29 +147,24 @@ export default {
         };
 
         const handleReset = () => {
-            rewardNo.value = 0;
-            rewardType.value = "--ជ្រើសរើស--";
-            description.value = "";
-            rewardValue.value = "";
-            qty.value = 0;
+            courseName.value = "";
+            courseDescription.value = "";
+            btnEdit.value = false;
+            selectedId.value = null; // Clear the selected ID
         };
-
-
 
 
         return {
             handleClose,
-            rewardNo,
-            description,
-            rewardValue,
-            rewardType,
+            courseName,
+            courseDescription,
+            handleSubmit,
             isLoading,
-            rewardTypesDoc,
-            btnEdit,
-            handleReset,
-            qty,
-            handleSubmit
+            courseNamesDoc,
 
+            btnEdit,
+            handleReset
+            
         };
     }
 };

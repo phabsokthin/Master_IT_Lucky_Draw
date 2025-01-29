@@ -193,7 +193,7 @@ export default {
         // Fetch data
         onMounted(async () => {
             unsubscribeRewardTypes = await fetchCollection();
-            fetchReward();
+           await fetchReward();
         });
 
         onUnmounted(() => {

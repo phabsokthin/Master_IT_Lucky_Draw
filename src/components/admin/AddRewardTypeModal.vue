@@ -170,7 +170,7 @@ export default {
             isLoading.value = true;
             try {
                 const data = {
-                    rewardType: rewardType.value,
+                    rewardType: rewardType.value.toLocaleLowerCase().trim(),
                     rewardDescription: rewardDescription.value,
                     createdAt: timestamp()
                 };

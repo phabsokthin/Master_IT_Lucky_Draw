@@ -46,14 +46,27 @@
                     </li>
 
                     <li class="block">
-                        <RouterLink :to="{ name: 'reward' }"
+                        <RouterLink :to="{ name: 'course' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 '">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>
-                            <span class="font-koulen">សិស្សផ្សងសំណាង</span>
+                            <span class="font-koulen">វគ្គសិក្សា</span>
+                        </RouterLink>
+                    </li>
+
+
+                    <li class="block">
+                        <RouterLink :to="{ name: 'studentlist' }"
+                            class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 '">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+                            </svg>
+                            <span class="font-koulen">សិស្សចាប់រង្វាន់</span>
                         </RouterLink>
                     </li>
 

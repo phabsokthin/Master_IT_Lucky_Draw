@@ -7,8 +7,10 @@ import DashboardView from '@/admin/DashboardView.vue';
 import RewardView from '@/admin/RewardView.vue';
 import LoginView from '@/admin/LoginView.vue';
 import SignUpView from '@/admin/SignUpView.vue';
+import StudentRewardList from '@/admin/StudentRewardListView.vue';
+import CourseView from '@/admin/CourseView.vue';
 
-// Guard to check if user is already logged in, and redirect to /admin if logged in
+
 const checkIfUserAlreadyLogin = (to, from, next) => {
   const user = projectAuth.currentUser;
   if (user) {
@@ -63,6 +65,16 @@ const routes = [
         name: 'reward',
         component: RewardView,
       },
+      {
+        path: 'course',
+        name: 'course',
+        component: CourseView,
+    },
+      {
+        path: 'studentlist',
+        name: 'studentlist',
+        component: StudentRewardList,
+    },
     ],
   },
   {
