@@ -66,7 +66,7 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="course in data" :key="course.id">
                                     <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize whitespace-nowrap dark:text-gray-200">
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize  font-koulen whitespace-nowrap dark:text-gray-200">
                                         {{ course.courseName }}
                                     </td>
                                     <td
@@ -84,8 +84,6 @@
                                     <td>
                                         <div class="flex justify-end pr-2 space-x-2">
                                             <button @click="handleDelete(course.id)"
-                                            class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600"> + សិស្សចាប់រង្វាន់</button>
-                                            <button @click="handleDelete(course.id)"
                                                 class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                             <button @click="handleUpdate(course)"
                                                 class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
@@ -96,7 +94,7 @@
                         </table>
                     </div>
 
-          
+
 
                     <!-- Pagination -->
                     <div class="px-4 py-1">
@@ -114,7 +112,7 @@
                                 {{ page }}
                             </button>
 
-                            <!-- Next Button --> 
+                            <!-- Next Button -->
                             <button type="button" @click="loadNextPage" :disabled="currentPage === totalPages"
                                 class="p-2.5 inline-flex items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                                 <span aria-hidden="true">»</span>
@@ -127,45 +125,43 @@
         </div>
     </div>
 
-    <component :is="currentComponent" @close="currentComponent=''" :courseDetail="courseDetail" :showReatimeData="showReatimeData"/>
+    <component :is="currentComponent" @close="currentComponent = ''" :courseDetail="courseDetail"
+        :showReatimeData="showReatimeData" />
 </template>
 
 
 <script>
-import { useFirestorePagination } from '@/firebase/useFirestorePagination'; 
+import { useFirestorePagination } from '@/firebase/useFirestorePagination';
 import useCollectionSearch from '@/firebase/useCollectionSearch'
 import { watch } from 'vue';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 import AddCourseModal from '@/components/admin/AddCourseModal.vue';
-import { handleMessageError, handleMessageSuccess } from '@/message';
-import checkRewardTypeExist from '@/firebase/checkRewardTypeExist'
+import {handleMessageSuccess } from '@/message';
 import useCollection from '@/firebase/useCollection';
 export default {
     components: {
         AddCourseModal
     },
     setup() {
-        
+
         const currentComponent = ref("")
         const searchText = ref("")
         const courseDetail = ref("")
         //for search resualt
         const searchResults = ref([]);
-        
+
         // const showReatimeData = ref("")
-      
+
         //use paginate
         const { data, currentPage, pageRange, totalPages, loadPreviousPage, loadNextPage, goToPage, fetchTotalPages, getDataRealTime } = useFirestorePagination('courses', 10);
         const { deleteDocs } = useCollection("courses");
 
-        
+
         onMounted(() => {
             fetchTotalPages();
             getDataRealTime(currentPage.value);
         });
-        
-
 
         // Search functionality
         watch(searchText, async (newVal) => {
@@ -196,8 +192,9 @@ export default {
         //add reward
         const handleAddRewardType = (component) => {
             currentComponent.value = component;
+            courseDetail.value = null
             // getDataRealTime(currentPage.value);
-          
+
         };
 
         //handle update
@@ -206,25 +203,18 @@ export default {
             currentComponent.value = 'AddCourseModal';
             courseDetail.value = item
             // getDataRealTime(currentPage.value);
-          
-            
+
         }
 
         //hanlde delete
         const handleDelete = async (id) => {
-            
             try {
                 if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
                     if (id) {
-                        const hasNoAssociatedRewards = await checkRewardTypeExist(id, 'courses');
-                        if (hasNoAssociatedRewards) {
-                            await deleteDocs(id);
-                            handleMessageSuccess("បានលុបប្រភេទរង្វាន់ដោយជោគជ័យ");
-                            console.log(getDataRealTime(currentPage.value));
-                            getDataRealTime(currentPage.value);
-                        } else {
-                            handleMessageError("អ្នកមិនអាចលុបប្រភេទរង្វាន់នេះបានទេ។ មានរង្វាន់ដែលពាក់ព័ន្ធជាមួយវា។");
-                        }
+                        await deleteDocs(id);
+                        handleMessageSuccess("បានលុបប្រភេទរង្វាន់ដោយជោគជ័យ");
+                        console.log(getDataRealTime(currentPage.value));
+                        getDataRealTime(currentPage.value);
                     }
                 }
             } catch (err) {
@@ -232,8 +222,6 @@ export default {
             }
         };
 
-
-    
         return {
             data,
             currentPage,

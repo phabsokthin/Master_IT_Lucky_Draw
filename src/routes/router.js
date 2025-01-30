@@ -9,6 +9,8 @@ import LoginView from '@/admin/LoginView.vue';
 import SignUpView from '@/admin/SignUpView.vue';
 import StudentRewardList from '@/admin/StudentRewardListView.vue';
 import CourseView from '@/admin/CourseView.vue';
+import StudentListView from '@/admin/StudentListView.vue';
+import ReportView from '@/admin/ReportView.vue';
 
 
 const checkIfUserAlreadyLogin = (to, from, next) => {
@@ -42,12 +44,12 @@ const routes = [
     path: '/signup',
     name: 'signup',
     component: SignUpView,
-},
+  },
   {
     path: '/login',
     name: 'login',
     component: LoginView
-},
+  },
   //admin protect route
   {
     path: '/admin',
@@ -69,17 +71,28 @@ const routes = [
         path: 'course',
         name: 'course',
         component: CourseView,
-    },
+      },
       {
         path: 'studentlist',
         name: 'studentlist',
         component: StudentRewardList,
-    },
+      },
+      {
+        path: '/student/:id',
+        name: 'student',
+        component: StudentListView
+      },
+      {
+        path: 'report',
+        name: 'report',
+        component: ReportView,
+      },
+
     ],
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/', // Catch-all route, redirect to home page for invalid paths
+    redirect: '/',
   },
 ];
 

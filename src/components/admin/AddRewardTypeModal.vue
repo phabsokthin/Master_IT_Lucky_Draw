@@ -123,9 +123,7 @@
                                                         <button @click="handleEdit(types)"
                                                             class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
                                                     </div>
-
                                                 </td>
-
                                             </tr>
                                         </tbody>
                                     </table>

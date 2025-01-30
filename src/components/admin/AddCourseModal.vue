@@ -127,7 +127,6 @@ export default {
                     
                     await addcDocs(data);
                     handleMessageSuccess("បានបង្កើតវគ្គសិក្សាដោយជោគជ័យ!");
-                   
                 }
                 emit('close')
                 

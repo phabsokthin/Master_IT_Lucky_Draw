@@ -54,11 +54,15 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        រង្វាន់
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         តម្លៃរង្វាន់(%)
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        ចំនួន
+                                        ចំនួន(រង្វាន់)
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -78,7 +82,7 @@
                                 <template v-for="rewardType in paginatedRewardDocs" :key="rewardType.id">
                                     <tr v-for="rewards in rewardType.rewards" :key="rewards.id">
                                         <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                            class="px-6 py-4 text-sm font-medium text-gray-800 font-koulen whitespace-nowrap dark:text-gray-200">
 
                                             <div class="flex gap-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -93,16 +97,27 @@
                                             </div>
                                         </td>
                                         <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                             {{ rewardType.rewardType }}
                                         </td>
                                         <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.rewardValue }}
+                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                            {{ rewards.courseName }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-800 font-koulen whitespace-nowrap dark:text-gray-200">
+                                            {{ rewards.rewardValue }} ភាគរយ
                                         </td>
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.qty }}
+                                            <div>
+                                                <div v-if="rewards.qty === 0">
+                                                    <p class="text-red-500 font-koulen">អស់ហើយ</p>
+                                                </div>
+                                                <div v-else>
+                                                    <p class="font-koulen">នៅសល់ {{ rewards.qty  }} </p>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
@@ -120,6 +135,10 @@
                                         </td>
                                         <td>
                                             <div class="flex justify-end pr-2 space-x-2">
+                                                <button @click="handleAddQtyModal(rewardType.id, rewards)"
+                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើលលម្អិត</button>
+                                                <button @click="handleAddQtyModal(rewardType.id, rewards)"
+                                                    class="p-2 text-xs text-white bg-yellow-500 rounded-full font-koulen hover:bg-yellow-600">បន្ថែម</button>
                                                 <button @click="handleDelete(rewardType.id, rewards.id)"
                                                     class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                                 <button @click="handleUpdate(rewardType.id, rewards)"
@@ -156,7 +175,7 @@
     </div>
 
     <component :is="currentComponent" @close="currentComponent = ''" :rewardTypeId="rewardTypeId"
-        :itemData="itemData" />
+        :itemData="itemData" :rewardTypesId="rewardTypesId" :itemQty="itemQty" />
 </template>
 
 <script>
@@ -168,11 +187,13 @@ import AddRewardModal from '@/components/admin/AddRewardModal.vue';
 import AddRewardTypeModal from '@/components/admin/AddRewardTypeModal.vue';
 import useDocument from '@/firebase/useDocument';
 import { handleMessageSuccess } from '@/message';
+import AddRewardQtyModal from '@/components/admin/AddRewardQtyModal.vue';
 
 export default {
     components: {
         AddRewardModal,
         AddRewardTypeModal,
+        AddRewardQtyModal
 
     },
     setup() {
@@ -190,10 +211,13 @@ export default {
         const currentPage = ref(1);
         const itemsPerPage = ref(4);
 
+        const rewardTypesId = ref("");
+        const itemQty = ref("");
+
         // Fetch data
         onMounted(async () => {
             unsubscribeRewardTypes = await fetchCollection();
-           await fetchReward();
+            await fetchReward();
         });
 
         onUnmounted(() => {
@@ -317,6 +341,14 @@ export default {
             }
         };
 
+        //add qty modal
+
+        const handleAddQtyModal = (rewardTypeId, item) => {
+            currentComponent.value = 'AddRewardQtyModal';
+            rewardTypesId.value = rewardTypeId
+            itemQty.value = item
+        }
+
         return {
             rewardDocs,
             paginatedRewardDocs,
@@ -331,7 +363,11 @@ export default {
             handleDelete,
             handleUpdate,
             itemData,
-            rewardTypeId
+            rewardTypeId,
+            handleAddQtyModal,
+            rewardTypesId,
+            itemQty
+           
         };
     },
 };

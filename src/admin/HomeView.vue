@@ -41,10 +41,10 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>
-                            <span class="font-koulen">បង្កើតរង្វាន់</span>
+                            <span class="font-koulen">រង្វាន់</span>
                         </RouterLink>
                     </li>
-
+                    
                     <li class="block">
                         <RouterLink :to="{ name: 'course' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 '">
@@ -71,7 +71,7 @@
                     </li>
 
                     <li class="block">
-                        <RouterLink :to="{ name: 'dashboard' }"
+                        <RouterLink :to="{ name: 'report' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 font-koulen'">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-5">
@@ -81,8 +81,7 @@
                             <span class=" font-koulen">របាយការណ៍</span>
                         </RouterLink>
                     </li>
-                    <li class="block">
-
+                    <!-- <li class="block">
                         <RouterLink :to="{ name: 'login' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 font-koulen'">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -92,7 +91,7 @@
                             </svg>
                             <span class=" font-koulen">អ្នកប្រើប្រាស់</span>
                         </RouterLink>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
 

@@ -66,7 +66,7 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="rewards in data" :key="rewards.id">
                                     <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize whitespace-nowrap dark:text-gray-200">
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize  font-koulen whitespace-nowrap dark:text-gray-200">
                                         {{ rewards.rewardType }}
                                     </td>
                                     <td
@@ -83,8 +83,8 @@
                                     </td>
                                     <td>
                                         <div class="flex justify-end pr-2 space-x-2">
-                                            <button @click="handleDelete(rewards.id)"
-                                            class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600"> + សិស្សចាប់រង្វាន់</button>
+                                            <RouterLink :to="{name: 'student', params: {id: rewards.id}}"
+                                            class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600"> + សិស្សចាប់រង្វាន់</RouterLink>
                                             <button @click="handleDelete(rewards.id)"
                                                 class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                             <button @click="handleUpdate(rewards)"
