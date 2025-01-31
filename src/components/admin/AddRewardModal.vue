@@ -20,7 +20,7 @@
 
                         <div class="space-y-1">
                             <label for="" class="font-koulen">លេខរង្វាន់: *</label>
-                            <input required v-model="rewardNo" min="0" type="text"
+                            <input required v-model="rewardNo" min="0" type="number"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
                                 placeholder="លេខរង្វាន់">
                         </div>
@@ -37,7 +37,7 @@
                         </div>
 
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">វគ្គសិក្សា</label>
+                            <label for="" class="font-koulen">រង្វាន់សំណាង</label>
                             <select v-model="courseName"
                                 class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
                                 <option value="">--ជ្រើសរើស--</option>
@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">ចំនួន: *</label>
+                            <label for="" class="font-koulen">ចំនួនសំណាង: *</label>
                             <input required v-model="qty" min="0" type="number"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
                                 placeholder="ចំនួន">

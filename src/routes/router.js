@@ -11,6 +11,7 @@ import StudentRewardList from '@/admin/StudentRewardListView.vue';
 import CourseView from '@/admin/CourseView.vue';
 import StudentListView from '@/admin/StudentListView.vue';
 import ReportView from '@/admin/ReportView.vue';
+import ViewStudentDetails from '@/admin/ViewStudentDetails.vue';
 
 
 const checkIfUserAlreadyLogin = (to, from, next) => {
@@ -81,6 +82,11 @@ const routes = [
         path: '/student/:id',
         name: 'student',
         component: StudentListView
+      },
+      {
+        path: '/viewStudentDetails/:id',
+        name: 'viewStudentDetails',
+        component: ViewStudentDetails
       },
       {
         path: 'report',

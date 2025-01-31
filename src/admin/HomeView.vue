@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-col h-screen ">
         <!-- Navbar (always visible on all screen sizes) -->
-        <nav class="flex items-center justify-between p-4 text-black border ">
+        <nav class="flex items-center justify-between p-4 text-black border print:hidden ">
             <div class="text-xl font-koulen font-[500] text-red-600 flex items-center gap-1">
                 <img src="@/assets/icons8-reward.gif" class="w-10" alt="">
-                <p>ម៉ាស្ទ័រអាយធីផ្សងសំណាង</p>
+                <p>ម៉ាស្ទ័រអាយធីចាប់រង្វាន់</p>
             </div>
             <div class="hidden space-x-6 lg:flex">
                 <CurrentDate />
@@ -31,7 +31,7 @@
         <div class="flex flex-1 ">
             <!-- Sidebar (hidden on small screens) -->
             <div :class="{ 'block': isSidebarOpen, 'lg:block': true }"
-                class="w-16 p-4 text-black transition-all duration-300 ease-in-out bg-white border-b border-r lg:w-64">
+                class="w-16 p-4 text-black transition-all duration-300 ease-in-out bg-white border-b border-r lg:w-64 print:hidden">
                 <ul class="space-y-1">
                     <li class="block">
                         <RouterLink :to="{ name: 'reward' }"
@@ -53,7 +53,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>
-                            <span class="font-koulen">វគ្គសិក្សា</span>
+                            <span class="font-koulen">ឱកាសសំណាង</span>
                         </RouterLink>
                     </li>
 

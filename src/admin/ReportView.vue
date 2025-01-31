@@ -18,10 +18,10 @@
                     <div class="flex items-center justify-between px-4 py-3">
                         <div class="flex items-center gap-2">
                             <div class="relative max-w-xs">
-                                <select name="hs-table-with-pagination-search" id="hs-table-with-pagination-search"
-                                    class="block w-full px-3 py-2.5 text-sm font-bold capitalize border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600 "
-                                    placeholder="ស្វែងរក..." >
-
+                                <select v-model="rewardTypeId" name="hs-table-with-pagination-search"
+                                    id="hs-table-with-pagination-search"
+                                    class="block w-full px-3 py-2.5 text-sm font-bold capitalize border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                    placeholder="ស្វែងរក...">
                                     <option value="">--ជ្រើសរើសរង្វាន់--</option>
                                     <option v-for="types in rewardTypes" :value="types.id" :key="types.id">{{
                                         types.rewardType }}</option>
@@ -40,58 +40,65 @@
                                 </div>
                             </div>
 
-                            <div class="relative max-w-xs">
-                                <input type="date" name="hs-table-with-pagination-search"
-                                    id="hs-table-with-pagination-search"
-                                    class="block w-full px-3 py-2 text-sm border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-                                    placeholder="ស្វែងរក..." :value="currentDate">
-                                <div
-                                    class="absolute inset-y-0 flex items-center text-gray-600 pointer-events-none start-0 ps-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-calendar-fold">
-                                        <path d="M8 2v4" />
-                                        <path d="M16 2v4" />
-                                        <path d="M21 17V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11Z" />
-                                        <path d="M3 10h18" />
-                                        <path d="M15 22v-4a2 2 0 0 1 2-2h4" />
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div class="relative max-w-xs">
-                                <input type="date" name="hs-table-with-pagination-search"
-                                    id="hs-table-with-pagination-search"
-                                    class="block w-full px-3 py-2 text-sm border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-                                    placeholder="ស្វែងរក..." :value="currentDate">
-                                <div
-                                    class="absolute inset-y-0 flex items-center text-gray-600 pointer-events-none start-0 ps-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="lucide lucide-calendar-fold">
-                                        <path d="M8 2v4" />
-                                        <path d="M16 2v4" />
-                                        <path d="M21 17V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11Z" />
-                                        <path d="M3 10h18" />
-                                        <path d="M15 22v-4a2 2 0 0 1 2-2h4" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="space-x-2">
-
-                                    <button class="flex items-center gap-1 btn_add">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            <!-- Date Filter Inputs (only show when a rewardType is selected) -->
+                            <div v-if="rewardTypeId" class="flex gap-2">
+                                <div class="relative max-w-xs">
+                                    <input type="date" v-model="startDate" name="hs-table-with-pagination-search"
+                                        id="hs-table-with-pagination-search"
+                                        class="block w-full px-3 py-2 text-sm border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                        placeholder="ស្វែងរក...">
+                                    <div
+                                        class="absolute inset-y-0 flex items-center text-gray-600 pointer-events-none start-0 ps-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-arrow-down-narrow-wide">
-                                            <path d="m3 16 4 4 4-4" />
-                                            <path d="M7 20V4" />
-                                            <path d="M11 4h4" />
-                                            <path d="M11 8h7" />
-                                            <path d="M11 12h10" />
+                                            class="lucide lucide-calendar-fold">
+                                            <path d="M8 2v4" />
+                                            <path d="M16 2v4" />
+                                            <path d="M21 17V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11Z" />
+                                            <path d="M3 10h18" />
+                                            <path d="M15 22v-4a2 2 0 0 1 2-2h4" />
                                         </svg>
-                                        <span>ច្រោះ</span></button>
+                                    </div>
+                                </div>
+
+                                <div class="relative max-w-xs">
+                                    <input type="date" v-model="endDate" name="hs-table-with-pagination-search"
+                                        id="hs-table-with-pagination-search"
+                                        class="block w-full px-3 py-2 text-sm border shadow-sm ps-9 placeholder:font-koulen focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                        placeholder="ស្វែងរក...">
+                                    <div
+                                        class="absolute inset-y-0 flex items-center text-gray-600 pointer-events-none start-0 ps-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-calendar-fold">
+                                            <path d="M8 2v4" />
+                                            <path d="M16 2v4" />
+                                            <path d="M21 17V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11Z" />
+                                            <path d="M3 10h18" />
+                                            <path d="M15 22v-4a2 2 0 0 1 2-2h4" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+
+                                <div>
+                                    <div class="space-x-2">
+                                        <button @click="handleFilterDate" class="flex items-center gap-1 btn_add">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-arrow-down-narrow-wide">
+                                                <path d="m3 16 4 4 4-4" />
+                                                <path d="M7 20V4" />
+                                                <path d="M11 4h4" />
+                                                <path d="M11 8h7" />
+                                                <path d="M11 12h10" />
+                                            </svg>
+                                            <span>ច្រោះ</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,76 +111,257 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        វគ្គសិក្សា
+                                        រង្វាន់សំណាង
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        ពិពណ៌នា
+                                        ឈ្មោះសិស្ស
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        លេខរង្វាន់
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        តម្លៃរង្វាន់
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        លេខទូរស័ព្ទ
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        អុីម៉ែល
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        អាស័យដ្ឋាន
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         កាលបរិច្ឆេត
                                     </th>
+
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-end font-koulen">
                                         សកម្មភាព
                                     </th>
                                 </tr>
                             </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Render rewards dynamically -->
+                                <template v-for="reward in rewards" :key="reward.id">
+                                    <tr v-for="student in reward.students" :key="student.id">
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium capitalize font-koulen whitespace-nowrap dark:text-gray-400">
+                                            <div v-if="reward.courseName">
+                                                {{ reward.courseName }}
+                                            </div>
+                                            <div v-else>
+                                                <p class="text-red-500">មិនមាន</p>
+                                            </div>
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
+                                            <div v-if="student.studentName">
+                                                {{ student.studentName }}
+                                            </div>
+                                            <div v-else>
+                                                <p class="text-red-500">មិនទាន់មាន</p>
+                                            </div>
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
+                                            {{ reward.rewardNo }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-orange-500 font-koulen whitespace-nowrap dark:text-gray-400">
+                                            {{ reward.rewardValue }} ភាគរយ
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                            {{ student.phone }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                            {{ student.email }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                            {{ student.address }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                            {{ reward.createdAt }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400 text-end">
+                                            <!-- <button 
+                                                class="text-green-500 font-koulen">មើល</button> -->
+
+                                            <button @click="handleCurrentViewDetails(reward, student)"
+                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើល</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
                         </table>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="px-4 py-1">
-                        <nav class="flex items-center space-x-1">
-                            <!-- Previous Button -->
-                            <button type="button"
-                                class="p-2.5 inline-flex items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                <span aria-hidden="true">«</span>
-                                <span class="sr-only">Previous</span>
-                            </button>
-
-                            <!-- Next Button -->
-                            <button type="button"
-                                class="p-2.5 inline-flex items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                <span aria-hidden="true">»</span>
-                                <span class="sr-only">Next</span>
-                            </button>
-                        </nav>
+                    <!-- Display Total Students -->
+                    <div class="px-4 py-3">
+                        <p class="font-koulen">សរុបសិស្ស: <span class="text-red-500">{{ totalStudents }}</span> នាក់</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <component :is="currentComponent" @close="currentComponent = ''" :rewardDoc="rewardDoc" :studentDoc="studentDoc"/>
 </template>
 
 <script>
-
-import getCollection from '@/firebase/getCollection';
+import { projectFirestore } from '@/config/config';
+import { handleMessageError } from '@/message';
+import { collection, query, where, getDocs, orderBy, doc, Timestamp } from 'firebase/firestore';
+import { watch, computed } from 'vue';
+import { onMounted } from 'vue';
+import ViewStudentRewardDetailsModal from '@/components/admin/ViewStudentRewardDetailModal.vue';
+import { ref } from 'vue';
 
 export default {
+    components:{
+        ViewStudentRewardDetailsModal
+    },
     setup() {
+        const rewardTypeId = ref("");
+        const startDate = ref("");
+        const endDate = ref("");
+        const rewardTypes = ref([]);
+        const rewards = ref([]);
 
-        const { document: rewardTypes } = getCollection("rewardTypes")
+        const currentComponent = ref("")
+
+        const rewardDoc = ref("")
+        const studentDoc = ref("")
+
+        // Fetch the reward types from Firestore
+        const getRewardTypes = async () => {
+            const rewardTypesCollection = collection(projectFirestore, "rewardTypes");
+            const rewardTypesSnapshot = await getDocs(rewardTypesCollection);
+            rewardTypes.value = rewardTypesSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+        };
+
+        // Fetch student information from a nested subcollection
+        const getStudentFromReward = async (rewardDocRef) => {
+            const studentsCollection = collection(rewardDocRef, "students"); // Assuming students are a subcollection inside rewards
+            const studentSnapshot = await getDocs(studentsCollection);
+            const students = studentSnapshot.docs.map(studentDoc => ({
+                id: studentDoc.id,
+                ...studentDoc.data(),
+            }));
+            return students;
+        };
+
+        // Fetch rewards based on filters (including nested student data)
+        const fetchRewards = async () => {
+            if (!rewardTypeId.value) return;
+
+            const rewardTypeDocRef = doc(projectFirestore, "rewardTypes", rewardTypeId.value);
+            const rewardsSubcollection = collection(rewardTypeDocRef, "rewards");
+
+            let rewardsQuery = query(rewardsSubcollection, orderBy("createdAt", "desc"));
+
+            if (startDate.value && endDate.value) {
+                const start = Timestamp.fromDate(new Date(startDate.value));
+                const end = Timestamp.fromDate(new Date(endDate.value + "T23:59:59"));
+
+                rewardsQuery = query(
+                    rewardsQuery,
+                    where("createdAt", ">=", start),
+                    where("createdAt", "<=", end)
+                );
+            }
+
+            const rewardsSnapshot = await getDocs(rewardsQuery);
+
+            if (rewardsSnapshot.empty) {
+                handleMessageError(`មិនមានទិន្ន័យសិស្សចន្លោះ ${startDate.value} ដល់ ${endDate.value}ទេ។ ព្យាយាមម្តងទៀត`);
+                rewards.value = [];
+            }
+            rewards.value = await Promise.all(
+                rewardsSnapshot.docs.map(async (doc) => {
+                    const rewardData = doc.data();
+                    const students = await getStudentFromReward(doc.ref); // Fetch students from nested subcollection
+                    return {
+                        id: doc.id,
+                        ...rewardData,
+                        createdAt: rewardData.createdAt.toDate().toLocaleDateString(),
+                        students: students.length > 0 ? students : ['No Student'], // Return students as an array
+                    };
+                })
+            );
+        };
+
+        // Call this function when the component is mounted
+        onMounted(() => {
+            getRewardTypes(); 
+            // startDate.value = getCurrentDate();
+            // endDate.value = getCurrentDate();
+        });
+
+        // Watch for changes in the reward type or dates to refetch rewards
+        watch([rewardTypeId, startDate, endDate], () => {
+            fetchRewards();
+        });
+
+        // Handle the date filter click
+        const handleFilterDate = () => {
+            fetchRewards(); // Refetch rewards based on the selected date range
+        };
+
+        // Computed property to calculate the total number of students
+        const totalStudents = computed(() => {
+            return rewards.value.reduce((total, reward) => {
+                return total + (reward.students && reward.students.length > 0 ? reward.students.length : 0);
+            }, 0);
+        });
+
 
 
         const getCurrentDate = () => {
             const today = new Date();
             const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
             const day = String(today.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        }
+
+        //handle View Student Modal
+
+        const handleCurrentViewDetails = (reward,item) => {
+            rewardDoc.value = reward
+            studentDoc.value = item
+            currentComponent.value = "ViewStudentRewardDetailsModal"
         };
 
-        const currentDate = getCurrentDate();
-
         return {
-            currentDate,
-            rewardTypes
+            rewardTypeId,
+            startDate,
+            endDate,
+            rewardTypes,
+            rewards,
+            handleFilterDate,
+            getCurrentDate,
+            totalStudents, 
+            handleCurrentViewDetails,
+            currentComponent,
+            rewardDoc,
+            studentDoc
         };
     },
 };
-
-
-
 </script>

@@ -12,7 +12,7 @@
 
                 <form @submit.prevent="handleSubmit" class="">
                     <div class="my-4">
-                        <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បន្ថែមចំនួន <span
+                        <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បន្ថែមចំនួនសំណាង <span
                                 class="text-green-600">{{ itemQty?.courseName }}</span>
                         </div>
                     </div>

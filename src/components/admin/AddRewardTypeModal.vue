@@ -9,7 +9,6 @@
             <div
                 class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-[45%]">
 
-
                 <form @submit.prevent="handleSubmit" class="">
                     <div class="my-4">
                         <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតប្រភេទរង្វាន់
@@ -111,7 +110,7 @@
                                             <tr v-for="types in rewardTypesDoc" :key="types">
 
                                                 <td class="p-2 whitespace-nowrap">
-                                                    <div class="text-left">{{ types.rewardType }}</div>
+                                                    <div class="text-left capitalize font-koulen">{{ types.rewardType }}</div>
                                                 </td>
                                                 <td class="p-2 whitespace-nowrap">
                                                     <div class="text-left">{{ types.rewardDescription }}</div>
@@ -131,11 +130,8 @@
                             </div>
                         </div>
                     </div>
-
                 </section>
             </div>
-
-
             <!-- component -->
 
         </div>

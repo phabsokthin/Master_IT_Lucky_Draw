@@ -62,7 +62,7 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        ចំនួន(រង្វាន់)
+                                        ចំនួនសំណាង(រង្វាន់)
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -133,10 +133,12 @@
                                                     day: 'numeric',
                                                 }) : 'N/A' }}
                                         </td>
+
+                                        
                                         <td>
                                             <div class="flex justify-end pr-2 space-x-2">
-                                                <button @click="handleAddQtyModal(rewardType.id, rewards)"
-                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើលលម្អិត</button>
+                                                <RouterLink :to="{name: 'viewStudentDetails', params: {id: rewardType.id}}"
+                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើលលម្អិត</RouterLink>
                                                 <button @click="handleAddQtyModal(rewardType.id, rewards)"
                                                     class="p-2 text-xs text-white bg-yellow-500 rounded-full font-koulen hover:bg-yellow-600">បន្ថែម</button>
                                                 <button @click="handleDelete(rewardType.id, rewards.id)"

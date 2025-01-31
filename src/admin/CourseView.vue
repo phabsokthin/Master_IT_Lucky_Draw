@@ -9,7 +9,7 @@
             <path
                 d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3" />
         </svg>
-        <div class="font-koulen">បញ្ចីវគ្គសិក្សា</div>
+        <div class="font-koulen">បញ្ចីសំណាង</div>
     </div>
 
     <div class="flex flex-col">
@@ -35,7 +35,7 @@
                         </div>
                         <div class="space-x-2">
                             <button class="btn_add" @click="handleAddRewardType('AddCourseModal')">+
-                                បន្ថែមវគ្គសិក្សា</button>
+                                បន្ថែមសំណាង</button>
                             <!-- <button class="btn_add" @click="handleAddReward('AddRewardModal')">+ បង្កើតថ្មី</button> -->
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        វគ្គសិក្សា
+                                        រង្វាន់សំណាង
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -66,7 +66,7 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="course in data" :key="course.id">
                                     <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize  font-koulen whitespace-nowrap dark:text-gray-200">
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                         {{ course.courseName }}
                                     </td>
                                     <td

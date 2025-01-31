@@ -160,14 +160,12 @@
                     </div>
 
                     <!-- <pre>{{ paginatedStudents }}</pre> -->
-
+                    
                 </div>
             </div>
         </div>
     </div>
-
-
-
+    
     <component :is="currentComponent" @close="currentComponent = ''" :updateRewardType="updateRewardType"
         :loadDataStudent="loadDataStudent" :rewardId="rewardId" :studentDoc="studentDoc" />
 </template>

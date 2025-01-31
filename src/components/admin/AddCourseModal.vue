@@ -12,22 +12,22 @@
 
                 <form @submit.prevent="handleSubmit" class="">
                     <div class="my-4">
-                        <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតវគ្គសិក្សា
+                        <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតរង្វាន់សំណាង
                         </div>
                     </div>
                     <div class="w-full">
 
                         <div class="space-y-1">
-                            <label for="" class="font-koulen">ឈ្មោះវគ្គសិក្សា: *</label>
+                            <label for="" class="font-koulen">រង្វាន់សំណាង: *</label>
                             <input required v-model="courseName" type="text"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="ឈ្មោះវគ្គសិក្សា">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
+                                placeholder="រង្វាន់សំណាង">
                         </div>
 
                         <div class="mt-2 space-y-1">
                             <label for="" class="font-koulen">ពិពណ៌នា</label>
                             <textarea v-model="courseDescription" rows="5" type="text"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
                                 placeholder="ពិពណ៌នា"></textarea>
                         </div>
                     </div>
@@ -55,7 +55,6 @@
                             </button>
                         </span>
 
-
                         <span class="flex w-full mt-3 space-x-2 rounded-md shadow-sm sm:mt-0 sm:w-auto">
                             <button type="button" @click="handleClose"
                                 class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
@@ -65,8 +64,6 @@
                         </span>
                     </div>
                 </form>
-
-
             </div>
 
 
