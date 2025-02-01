@@ -223,8 +223,6 @@ export default {
         };
 
 
-
-
         return {
             handleClose,
             rewardNo,

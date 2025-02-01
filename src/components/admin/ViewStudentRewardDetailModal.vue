@@ -7,7 +7,7 @@
       </div>
       <span class="hidden sm:inline-block sm:align-top sm:h-screen"></span>
       <div
-        class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-[45%]">
+        class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-[30%]">
 
 
         <div class="">
@@ -25,11 +25,8 @@
 
                 <!-- Profile Details Section -->
                 <div class="">
-                  <!-- Profile Image and Name -->
-                  <div class="relative flex justify-center mt-2">
-                    <div class="space-y-2">
-
-                      <div class="flex items-center justify-center rounded-full h-28 w-28 bg-gray-50">
+                  <div class="flex justify-center my-4">
+                  <div class="flex items-center justify-center rounded-full h-28 w-28 bg-gray-50">
                         <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none"
                           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                           class="lucide lucide-user">
@@ -37,8 +34,20 @@
                           <circle cx="12" cy="7" r="4" />
                         </svg>
                       </div>
+                    </div>
+                  <!-- Profile Image and Name -->
+                  <div class="relative flex justify-center mt-2">
+                    <div class="space-y-2">
+
+                    
                       <div class="text-center">
-                        <span class="text-[50px] font-koulen">{{ studentDoc.studentName }}</span>
+                        
+                        <div v-if="studentDoc.studentName" class="text-[30px] font-koulen">
+                          <span>{{ studentDoc.studentName }}</span>
+                          <p class="text-sm">រង្វាន់ {{ rewardDoc.courseName }} <span class="text-green-600">{{ rewardDoc.rewardValue }} ភាគរយ</span></p>
+                        </div>
+                        <span v-else class="text-[30px] font-koulen text-red-500">មិនមាន</span>
+
                       </div>
                     </div>
                   </div>
@@ -52,23 +61,29 @@
                   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <!-- Email -->
                     <div>
-                      <p class="text-sm text-gray-500">Email</p>
-                      <p class="font-medium text-gray-800">john.doe@example.com</p>
+                      <p class="text-sm text-gray-500 font-koulen">អុីម៉ែល</p>
+                      <p class="font-medium text-gray-800">{{ studentDoc.email  }}</p>
                     </div>
                     <!-- Phone -->
                     <div>
-                      <p class="text-sm text-gray-500">Phone</p>
-                      <p class="font-medium text-gray-800">+1 (123) 456-7890</p>
+                      <p class="text-sm text-gray-500 font-koulen">លេខទូរស័ព្ទ</p>
+                      <p class="font-medium text-gray-800">{{ studentDoc.phone }}</p>
                     </div>
                     <!-- Location -->
                     <div>
-                      <p class="text-sm text-gray-500">Location</p>
-                      <p class="font-medium text-gray-800">New York, USA</p>
+                      <p class="text-sm text-gray-500 font-koulen">អាស័យដ្ឋាន</p>
+                      <p class="font-medium text-gray-800">{{ studentDoc.address }}</p>
                     </div>
                     <!-- Joined Date -->
                     <div>
-                      <p class="text-sm text-gray-500">Joined</p>
-                      <p class="font-medium text-gray-800">January 2022</p>
+                      <p class="text-sm text-gray-500 font-koulen">បានរង្វាន</p>
+                      <p class="font-medium text-gray-800">
+                        {{ studentDoc.createdAt ? new Date(studentDoc.createdAt.seconds *
+                                            1000).toLocaleDateString('en-US', {
+                                                weekday: 'short', year: 'numeric', month:
+                                                    'short', day: 'numeric'
+                                            }) : 'N/A' }}
+                      </p>
                     </div>
                   </div>
 
@@ -87,17 +102,7 @@
           </div>
 
           <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-            <span v-if="!btnEdit" class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
-              <button v-if="!isLoading" type="submit"
-                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-600 border border-transparent rounded-md shadow-sm font-koulen hover:bg-green-500 focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
-                រក្សាទុក
-              </button>
-              <button v-else
-                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-600 border border-transparent rounded-md shadow-sm font-koulen hover:bg-green-500 focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
-                កំពុងរក្សាទុក...
-              </button>
-            </span>
-
+         
             <span class="flex w-full mt-3 space-x-2 rounded-md shadow-sm sm:mt-0 sm:w-auto">
               <button type="button" @click="handleClose"
                 class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">

@@ -1,23 +1,15 @@
 <template>
     <div class="flex flex-col">
         <!-- Navbar (always visible on all screen sizes) -->
-        <nav class="bg-white  border text-black p-4 flex justify-between items-center">
+        <nav class="flex items-center justify-between p-4 text-black bg-white border">
             <div class="text-xl font-koulen font-[500] text-red-600 flex items-center gap-1">
                 <img src="@/assets/icons8-reward.gif" class="w-10" alt="">
                 <p>រង្វាន់ផ្សងសំណាង</p>
             </div>
-            <div class="hidden lg:flex space-x-6">
-                <RouterLink to="/" class="hover:bg-gray-700 rounded px-4 py-2">Home</RouterLink>
-                <RouterLink to="/about" class="hover:bg-gray-700 rounded px-4 py-2">About</RouterLink>
-                <!-- Add more links as needed -->
+           
+            <div>
+                <CurrentDate/>
             </div>
-            <!-- Mobile menu toggle button -->
-            <!-- <button
-          class="lg:hidden p-2 text-white bg-gray-800 rounded-md"
-          @click="toggleSidebar"
-        >
-          Toggle Sidebar
-        </button> -->
         </nav>
 
      
@@ -26,8 +18,11 @@
 
 <script>
 import { ref } from 'vue';
-
+import CurrentDate from '../admin/CurrentDate.vue';
 export default {
+    components: {
+        CurrentDate
+    },
     setup() {
         const isSidebarOpen = ref(false);
 

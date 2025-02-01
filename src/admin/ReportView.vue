@@ -151,59 +151,56 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <!-- Render rewards dynamically -->
                                 <template v-for="reward in rewards" :key="reward.id">
-                                    <tr v-for="student in reward.students" :key="student.id">
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium capitalize font-koulen whitespace-nowrap dark:text-gray-400">
-                                            <div v-if="reward.courseName">
-                                                {{ reward.courseName }}
-                                            </div>
-                                            <div v-else>
-                                                <p class="text-red-500">មិនមាន</p>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
-                                            <div v-if="student.studentName">
+                                    <template v-for="student in reward.students" :key="student.id">
+                                        <tr v-if="student.studentName">
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium capitalize font-koulen whitespace-nowrap dark:text-gray-400">
+                                                <div v-if="reward.courseName">
+                                                    {{ reward.courseName }}
+                                                </div>
+                                                <div v-else>
+                                                    <p class="text-red-500">មិនមាន</p>
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
                                                 {{ student.studentName }}
-                                            </div>
-                                            <div v-else>
-                                                <p class="text-red-500">មិនទាន់មាន</p>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
-                                            {{ reward.rewardNo }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-orange-500 font-koulen whitespace-nowrap dark:text-gray-400">
-                                            {{ reward.rewardValue }} ភាគរយ
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                            {{ student.phone }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                            {{ student.email }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                            {{ student.address }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                            {{ reward.createdAt }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400 text-end">
-                                            <!-- <button 
-                                                class="text-green-500 font-koulen">មើល</button> -->
-
-                                            <button @click="handleCurrentViewDetails(reward, student)"
-                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើល</button>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
+                                                {{ reward.rewardNo }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-orange-500 font-koulen whitespace-nowrap dark:text-gray-400">
+                                                {{ reward.rewardValue }} ភាគរយ
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                                {{ student.phone }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                                {{ student.email }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                                {{ student.address }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                                {{ reward.createdAt }}
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400 text-end">
+                                                <button @click="handleCurrentViewDetails(reward, student)"
+                                                    class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">
+                                                    មើល
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </template>
+
                             </tbody>
                         </table>
                     </div>
@@ -217,7 +214,7 @@
         </div>
     </div>
 
-    <component :is="currentComponent" @close="currentComponent = ''" :rewardDoc="rewardDoc" :studentDoc="studentDoc"/>
+    <component :is="currentComponent" @close="currentComponent = ''" :rewardDoc="rewardDoc" :studentDoc="studentDoc" />
 </template>
 
 <script>
@@ -230,7 +227,7 @@ import ViewStudentRewardDetailsModal from '@/components/admin/ViewStudentRewardD
 import { ref } from 'vue';
 
 export default {
-    components:{
+    components: {
         ViewStudentRewardDetailsModal
     },
     setup() {
@@ -308,7 +305,7 @@ export default {
 
         // Call this function when the component is mounted
         onMounted(() => {
-            getRewardTypes(); 
+            getRewardTypes();
             // startDate.value = getCurrentDate();
             // endDate.value = getCurrentDate();
         });
@@ -326,7 +323,10 @@ export default {
         // Computed property to calculate the total number of students
         const totalStudents = computed(() => {
             return rewards.value.reduce((total, reward) => {
-                return total + (reward.students && reward.students.length > 0 ? reward.students.length : 0);
+                const validStudents = reward.students
+                    ? reward.students.filter(student => student.studentName) // Count only students with a name
+                    : [];
+                return total + validStudents.length;
             }, 0);
         });
 
@@ -342,7 +342,7 @@ export default {
 
         //handle View Student Modal
 
-        const handleCurrentViewDetails = (reward,item) => {
+        const handleCurrentViewDetails = (reward, item) => {
             rewardDoc.value = reward
             studentDoc.value = item
             currentComponent.value = "ViewStudentRewardDetailsModal"
@@ -356,7 +356,7 @@ export default {
             rewards,
             handleFilterDate,
             getCurrentDate,
-            totalStudents, 
+            totalStudents,
             handleCurrentViewDetails,
             currentComponent,
             rewardDoc,
