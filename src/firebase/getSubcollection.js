@@ -17,7 +17,6 @@ export const useFirestoreCollection = (collectionName) => {
             console.error(`Error fetching collection ${collectionName}:`, error);
         }
     };
-
     return { documents, fetchCollection };
 };
 

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/view/HomeView.vue'; // Example component
+import HomeWinner from '@/view/HomeWinner.vue';
+// import HomePage from '@/view/HomeView.vue'; // Example component
 import AboutPage from '@/view/AboutView.vue'; // Example component
 import { projectAuth } from '@/config/config';
 import HomeView from '@/admin/HomeView.vue';
@@ -9,19 +10,19 @@ import LoginView from '@/admin/LoginView.vue';
 import SignUpView from '@/admin/SignUpView.vue';
 import StudentRewardList from '@/admin/StudentRewardListView.vue';
 import CourseView from '@/admin/CourseView.vue';
-import StudentListView from '@/admin/StudentListView.vue';
+import Student from '@/admin/StudentView.vue'
 import ReportView from '@/admin/ReportView.vue';
 import ViewStudentDetails from '@/admin/ViewStudentDetails.vue';
 
 
-const checkIfUserAlreadyLogin = (to, from, next) => {
-  const user = projectAuth.currentUser;
-  if (user) {
-    next({ name: 'admin' }); // Redirect logged-in users to /admin
-  } else {
-    next(); // Continue to the page
-  }
-};
+// const checkIfUserAlreadyLogin = (to, from, next) => {
+//   const user = projectAuth.currentUser;
+//   if (user) {
+//     next({ name: 'admin' }); // Redirect logged-in users to /admin
+//   } else {
+//     next(); // Continue to the page
+//   }
+// };
 
 // Guard to check if the user is authenticated before accessing admin routes
 const requiresAuth = (to, from, next) => {
@@ -37,8 +38,8 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomePage,
-    beforeEnter: checkIfUserAlreadyLogin, // Redirect logged-in users from the home page to /admin
+    component: HomeWinner,
+   // beforeEnter: checkIfUserAlreadyLogin, // Redirect logged-in users from the home page to /admin
   },
   { path: '/about', name: 'About', component: AboutPage },
   {
@@ -79,9 +80,9 @@ const routes = [
         component: StudentRewardList,
       },
       {
-        path: '/student/:id',
+        path: '/student',
         name: 'student',
-        component: StudentListView
+        component: Student
       },
       {
         path: '/viewStudentDetails/:id',

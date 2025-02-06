@@ -47,7 +47,19 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        លេខរង្វាន់
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         រង្វាន់សំណាង
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        ចំនួនសំណាង
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        តម្លៃរង្វាន់
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -66,9 +78,22 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="course in data" :key="course.id">
                                     <td
+                                        class="px-6 py-4 text-sm font-medium text-red-500 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ course.courseNoReward }}
+                                    </td>
+                                    <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                         {{ course.courseName }}
                                     </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-green-500 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ course.qty }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ course.courseValue }}
+                                    </td>
+                                    
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ course.courseDescription }}
@@ -131,6 +156,7 @@
 
 
 <script>
+
 import { useFirestorePagination } from '@/firebase/useFirestorePagination';
 import useCollectionSearch from '@/firebase/useCollectionSearch'
 import { watch } from 'vue';
@@ -240,4 +266,6 @@ export default {
         };
     },
 }
+
+
 </script>

@@ -261,7 +261,7 @@
                                         <p class="font-koulen">
                                             <strong>លេខទូរស័ព្ទអ្នកឈ្នះ:</strong> <span class="text-red-500">{{ student.phone }}</span>
                                         </p>
-                                        <p class="font-koulen">
+                                        <p class="space-x-1 font-koulen">
                                             <strong>ឈ្នះរង្វាន់🏅 </strong> <span class="text-red-500">{{ student.rewardCourseName }}</span>
                                             <span class="text-red-500">{{ student.rewardValue }} ភាគរយ</span>
                                         </p>
@@ -606,7 +606,6 @@ export default {
                 // isModalWarning.value = true
                 isLoading.value = false;
                 displayedStudents.value = []
-                // ❌ Do NOT clear localStorage when no winners exist
                 return;
             }
 
@@ -641,7 +640,7 @@ export default {
             // Check for duplicate
             const isDuplicate = currentWinner.value.some(student => student.id === studentToAdd.id);
             if (isDuplicate) {
-                handleMessageError('សិស្សទាំងអស់បានបង្ហាញ់នៅលើផ្ទាំងរួចរាល់ហើយ។​​ព្យាយាមម្តងទៀត');
+                handleMessageError('សិស្សទាំងអស់បានបង្ហាញនៅលើផ្ទាំងរួចរាល់ហើយ។​​ព្យាយាមម្តងទៀត');
                 isLoading.value = false;
                 return;
             }

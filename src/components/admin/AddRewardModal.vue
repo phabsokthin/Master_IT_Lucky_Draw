@@ -15,29 +15,29 @@
                         <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតរង្វាន់ថ្មី
                         </div>
                     </div>
-                   
+
                     <div class="w-full">
 
-                        <div class="space-y-1">
+                        <!-- <div class="space-y-1">
                             <label for="" class="font-koulen">លេខរង្វាន់: *</label>
                             <input required v-model="rewardNo" min="0" type="number"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
                                 placeholder="លេខរង្វាន់">
-                        </div>
+                        </div> -->
 
                         <div class="mt-2 space-y-1">
                             <label for="" class="font-koulen">ប្រភេទរង្វាន់: *</label>
                             <select required v-model="rewardType"
                                 class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
                                 <option selected disabled value="">--ជ្រើសរើស--</option>
-                                <option  v-for="types in rewardTypesDoc" :key="types.id" :value="types.id">
+                                <option v-for="types in rewardTypesDoc" :key="types.id" :value="types.id">
                                     {{ types.rewardType }}
                                 </option>
                             </select>
                         </div>
 
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">រង្វាន់សំណាង</label>
+                            <label for="" class="font-koulen">រង្វាន់សំណាង:*</label>
                             <select v-model="courseName"
                                 class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
                                 <option value="">--ជ្រើសរើស--</option>
@@ -48,18 +48,31 @@
                         </div>
 
 
+
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">តម្លៃរង្វាន់(%): *</label>
-                            <input required v-model="rewardValue" type="text"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="តម្លៃរង្វាន់">
+                            <label for="" class="font-koulen">ឈ្មោះសិស្ស:*</label>
+                            <select v-model="studentName"
+                                class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
+                                <option value="">--ជ្រើសរើស--</option>
+                                <option v-for="student in studentDoc" :key="student.studentName"
+                                    :value="student.studentName">
+                                    {{ student.studentName }}
+                                </option>
+                            </select>
                         </div>
 
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">ចំនួនសំណាង: *</label>
-                            <input required v-model="qty" min="0" type="number"
+                            <label for="" class="font-koulen">លេខទូរស័ព្ទ:</label>
+                            <input required v-model="phone" min="0" type="number"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="ចំនួន">
+                                placeholder="លេខទូរស័ព្ទ" disabled>
+                        </div>
+
+                        <div class="mt-2 space-y-1">
+                            <label for="" class="font-koulen">អុីម៉ែល:</label>
+                            <input required v-model="email" min="0" type="number"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
+                                placeholder="អុីម៉ែល" disabled>
                         </div>
 
 
@@ -106,12 +119,21 @@
 
             </div>
 
+            <div>{{ phone }}</div>
 
-            <!-- component -->
 
+            <p></p>
         </div>
-    </div>
 
+
+        <!-- component -->
+
+
+
+
+
+    </div>
+  
 </template>
 
 
@@ -125,6 +147,9 @@ import useDoument from '@/firebase/useDocument';
 import { onMounted } from 'vue';
 
 import { collection, query, where, getDocs } from 'firebase/firestore';
+// import { watch } from 'vue';
+import getCollectionQueryTearm from '@/firebase/getCollectionQueryTerm'
+import { watch } from 'vue';
 
 export default {
     props: ['rewardTypeId', 'itemData',],
@@ -134,26 +159,58 @@ export default {
         const rewardType = ref("");
 
         const rewardValue = ref("");
-        const qty = ref(0);
+        const qty = ref(1);
         const courseName = ref("")
         const isLoading = ref(false);
 
-        const { document: rewardTypesDoc } = getCollection("rewardTypes");
-        const { document: courseDoc } = getCollection("courses");
+        const studentName = ref("")
+        const studentItem = ref({})
 
+        const { document: rewardTypesDoc } = getCollection("rewardTypes");
+        const { document: studentDoc } = getCollection("students");
+        const { document: courseDoc } = getCollection("courses");
         const btnEdit = ref(false);
+        const phone = ref("")
+        const email = ref("")
+        // const { documents } =  getCollectionQueryTearm("students", where("studentName", "==", studentName.value));
+
+        watch(studentName, async () => {
+            if (studentName.value) {
+                try {
+                    // Perform the query when studentName is set
+                    const { documents } = await getCollectionQueryTearm("students", where("studentName", "==", studentName.value));
+
+                    // Watch the documents to get the student data and update the phone number
+                    watch(documents, () => {
+                        const studentData = documents.value && documents.value[0]; // assuming documents is an array
+                        if (studentData) {
+                            studentItem.value = studentData;
+                            phone.value = studentData.phone || ''; 
+                            email.value = studentData.email || '';
+                            console.log('Student items:', studentItem.value);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error fetching student details:', error);
+                }
+            }
+        });
+
 
 
         onMounted(() => {
             if (props.itemData) {
-                rewardNo.value = props.itemData.rewardNo;
+                
+                studentName.value = props.itemData.studentName;
+                phone.value = props.itemData.phone;
+                email.value = props.itemData.email;
                 description.value = props.itemData.rewardDescription;
                 rewardType.value = props.itemData.rewardType;
-                rewardValue.value = props.itemData.rewardValue;
-                qty.value = props.itemData.qty;
+             
                 courseName.value = props.itemData.courseName
                 btnEdit.value = true;
             }
+
         })
 
 
@@ -164,12 +221,15 @@ export default {
                 const { addDocs } = useDoument("rewardTypes", rewardType.value, "rewards");
 
                 const data = {
-                    rewardNo: rewardNo.value,
+                    studentName: studentName.value,
+                    phone: phone.value,
+                    email: email.value,
+                    qty: qty.value,
                     rewardType: rewardType.value,
                     courseName: courseName.value,
                     rewardDescription: description.value,
-                    rewardValue: rewardValue.value,
-                    qty: qty.value,
+                    
+                
                     createdAt: timestamp()
                 };
 
@@ -236,7 +296,13 @@ export default {
             handleReset,
             qty,
             handleSubmit,
-            courseDoc
+            courseDoc,
+            studentDoc,
+            phone,
+            studentName,
+            studentItem,
+            email
+
 
         };
     }

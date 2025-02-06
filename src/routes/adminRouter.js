@@ -7,9 +7,9 @@ import SignUpView from '@/admin/SignUpView.vue';
 import { projectAuth } from '@/config/config';
 import StudentRewardList from '@/admin/StudentRewardListView.vue';
 import CourseView from '@/admin/CourseView.vue';
-import StudentListView from '@/admin/StudentListView.vue';
 import ReportView from '@/admin/ReportView.vue';
 import ViewStudentDetails from '@/admin/ViewStudentDetails.vue';
+import Student from '@/admin/StudentView.vue'
 
 const requiresAuth = (to, from, next) => {
     const user = projectAuth.currentUser;
@@ -70,9 +70,9 @@ const routes = [
                 component: StudentRewardList,
             },
             {
-                path: '/student/:id',
+                path: '/student',
                 name: 'student',
-                component: StudentListView
+                component: Student
             },
             {
                 path: '/viewStudentDetails/:id',

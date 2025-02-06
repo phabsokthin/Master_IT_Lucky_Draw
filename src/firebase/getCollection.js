@@ -1,13 +1,13 @@
 import { projectFirestore } from "@/config/config"
-import { collection, onSnapshot, query } from "firebase/firestore"
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
 import { ref, watchEffect } from "vue"
 
 
 const getCollection = (collectionName) => {
 
     const document = ref(null)
-    // const collectionRef = query(collection(projectFirestore, collectionName), orderBy("createdAt", "desc"))
-    const collectionRef = query(collection(projectFirestore, collectionName))
+    const collectionRef = query(collection(projectFirestore, collectionName), orderBy("createdAt", "desc"))
+    // const collectionRef = query(collection(projectFirestore, collectionName))
 
 
     const unsubscript = onSnapshot(collectionRef, (qry) => {

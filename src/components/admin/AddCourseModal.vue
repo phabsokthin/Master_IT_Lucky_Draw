@@ -15,13 +15,33 @@
                         <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតរង្វាន់សំណាង
                         </div>
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-3">
 
+                        <div class="space-y-1">
+                            <label for="" class="font-koulen">លេខរង្វាន់: *</label>
+                            <input required v-model="courseNoReward" type="number"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
+                                placeholder="លេខរង្វាន់">
+                        </div>
                         <div class="space-y-1">
                             <label for="" class="font-koulen">រង្វាន់សំណាង: *</label>
                             <input required v-model="courseName" type="text"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
                                 placeholder="រង្វាន់សំណាង">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="" class="font-koulen">ចំនួនសំណាង: *</label>
+                            <input required v-model="qty" type="number"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
+                                placeholder="លេខរង្វាន់">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="" class="font-koulen">តម្លៃរង្វាន់: *</label>
+                            <input required v-model="courseValue" type="text"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
+                                placeholder="លេខរង្វាន់">
                         </div>
 
                         <div class="mt-2 space-y-1">
@@ -60,7 +80,7 @@
                                 class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
                                 បោះបង់
                             </button>
-                           
+
                         </span>
                     </div>
                 </form>
@@ -78,7 +98,7 @@
 <script>
 import { ref } from 'vue';
 import useCollection from '@/firebase/useCollection';
-import {  handleMessageSuccess } from '@/message';
+import { handleMessageSuccess } from '@/message';
 import getCollection from '@/firebase/getCollection';
 import { timestamp } from '@/config/config';
 import { onMounted } from 'vue';
@@ -94,12 +114,19 @@ export default {
         const { addcDocs, updateDocs } = useCollection("courses");
         const isLoading = ref(false);
 
+        const courseNoReward = ref("")
+        const qty = ref(0)
+        const courseValue = ref("")
+
         const { document: courseNamesDoc } = getCollection("courses");
         const btnEdit = ref(false);
 
 
-        onMounted(() =>{
-            if(props.courseDetail){
+        onMounted(() => {
+            if (props.courseDetail) {
+                courseNoReward.value = props.courseDetail.courseNoReward;
+                qty.value = props.courseDetail.qty;
+                courseValue.value = props.courseDetail.courseValue;
                 courseName.value = props.courseDetail.courseName;
                 courseDescription.value = props.courseDetail.courseDescription;
                 btnEdit.value = true;
@@ -110,23 +137,26 @@ export default {
             isLoading.value = true;
             try {
                 const data = {
+                    courseNoReward: courseNoReward.value,
                     courseName: courseName.value.toLocaleLowerCase().trim(),
+                    qty: qty.value,
+                    courseValue: courseValue.value,
                     courseDescription: courseDescription.value,
                     createdAt: timestamp()
                 };
 
                 if (btnEdit.value) {
-                   
+
                     await updateDocs(props.courseDetail.id, data);
-                    handleMessageSuccess("បានកែប្រែដោយជោគជ័យ!"); 
-                   
+                    handleMessageSuccess("បានកែប្រែដោយជោគជ័យ!");
+
                 } else {
-                    
+
                     await addcDocs(data);
                     handleMessageSuccess("បានបង្កើតវគ្គសិក្សាដោយជោគជ័យ!");
                 }
                 emit('close')
-                
+
                 handleReset();
             } catch (err) {
                 console.log(err);
@@ -135,7 +165,7 @@ export default {
             }
         };
 
-    
+
 
 
         const handleClose = () => {
@@ -159,8 +189,11 @@ export default {
             courseNamesDoc,
 
             btnEdit,
-            handleReset
-            
+            handleReset,
+            courseNoReward,
+            qty,
+            courseValue
+
         };
     }
 };

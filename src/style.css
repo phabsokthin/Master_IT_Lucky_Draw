@@ -8,4 +8,7 @@
     .btn_add {
         @apply p-2 px-3 text-sm text-white bg-blue-500 font-koulen hover:bg-blue-600;
     }
+    .bg-reward{
+        @apply p-2 text-orange-600 bg-yellow-400 rounded-full shadow-lg font-koulen text-sm hover:bg-yellow-500;
+    }
 }

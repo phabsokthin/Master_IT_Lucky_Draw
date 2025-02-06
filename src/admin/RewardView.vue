@@ -44,9 +44,11 @@
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
+                                  
+                                   
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        លេខរង្វាន់
+                                        ឈ្មោះសិស្ស
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -54,15 +56,11 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        រង្វាន់
+                                      លេខទូរស័ព្ទ
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        តម្លៃរង្វាន់(%)
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        ចំនួនសំណាង(រង្វាន់)
+                                      អុីម៉ែល
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -81,44 +79,24 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <template v-for="rewardType in paginatedRewardDocs" :key="rewardType.id">
                                     <tr v-for="rewards in rewardType.rewards" :key="rewards.id">
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 font-koulen whitespace-nowrap dark:text-gray-200">
-
-                                            <div class="flex gap-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor"
-                                                    class="text-orange-500 size-5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
-                                                </svg>
-
-                                                <p class="bg-green-500 w-[50px] text-white px-3 rounded-full">{{
-                                                    rewards.rewardNo }}</p>
-                                            </div>
-                                        </td>
+                                       
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                            {{ rewardType.rewardType }}
+                                            {{ rewards.studentName }}
                                         </td>
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                             {{ rewards.courseName }}
                                         </td>
                                         <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 font-koulen whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.rewardValue }} ភាគរយ
+                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                            {{ rewards.phone }}
                                         </td>
                                         <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                            <div>
-                                                <div v-if="rewards.qty === 0">
-                                                    <p class="text-red-500 font-koulen">អស់ហើយ</p>
-                                                </div>
-                                                <div v-else>
-                                                    <p class="font-koulen">នៅសល់ {{ rewards.qty  }} </p>
-                                                </div>
-                                            </div>
+                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                            {{ rewards.email }}
                                         </td>
+                                        
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
                                             {{ rewards.rewardDescription }}
@@ -137,10 +115,10 @@
                                         
                                         <td>
                                             <div class="flex justify-end pr-2 space-x-2">
-                                                <RouterLink :to="{name: 'viewStudentDetails', params: {id: rewardType.id}}"
-                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើលលម្អិត</RouterLink>
-                                                <button @click="handleAddQtyModal(rewardType.id, rewards)"
-                                                    class="p-2 text-xs text-white bg-yellow-500 rounded-full font-koulen hover:bg-yellow-600">បន្ថែម</button>
+                                                <!-- <RouterLink :to="{name: 'viewStudentDetails', params: {id: rewardType.id}}"
+                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើលលម្អិត</RouterLink> -->
+                                                <!-- <button @click="handleAddQtyModal(rewardType.id, rewards)"
+                                                    class="p-2 text-xs text-white bg-yellow-500 rounded-full font-koulen hover:bg-yellow-600">បន្ថែម</button> -->
                                                 <button @click="handleDelete(rewardType.id, rewards.id)"
                                                     class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                                 <button @click="handleUpdate(rewardType.id, rewards)"
@@ -324,8 +302,6 @@ export default {
             currentComponent.value = 'AddRewardModal';
             rewardTypeId.value = rewardType
             itemData.value = item
-
-
         };
 
         //handle delete
