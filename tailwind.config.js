@@ -8,6 +8,8 @@ export default {
     extend: {
       fontFamily: {
         koulen: ['Koulen', 'serif'],
+        moul_regular: ['Moul', 'serif'],
+      
       },
     },
   },

@@ -3,12 +3,14 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Koulen&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Moul&display=swap');
+
 
 @layer components{
     .btn_add {
         @apply p-2 px-3 text-sm text-white bg-blue-500 font-koulen hover:bg-blue-600;
     }
     .bg-reward{
-        @apply p-2 text-orange-600 bg-yellow-400 rounded-full shadow-lg font-koulen text-sm hover:bg-yellow-500;
+        @apply p-2 px-4 text-orange-600 bg-yellow-400 rounded-full shadow-lg font-koulen text-lg hover:bg-yellow-500;
     }
 }

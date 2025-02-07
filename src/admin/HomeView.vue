@@ -33,15 +33,17 @@
             <div :class="{ 'block': isSidebarOpen, 'lg:block': true }"
                 class="w-16 p-4 text-black transition-all duration-300 ease-in-out bg-white border-b border-r lg:w-64 print:hidden">
                 <ul class="space-y-1">
+                   
+
                     <li class="block">
-                        <RouterLink :to="{ name: 'reward' }"
+                        <RouterLink :to="{ name: 'student' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 '">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>
-                            <span class="font-koulen">រង្វាន់</span>
+                            <span class="font-koulen">បញ្ជីសិស្ស</span>
                         </RouterLink>
                     </li>
                     
@@ -70,15 +72,17 @@
                         </RouterLink>
                     </li> -->
 
+                   
+
                     <li class="block">
-                        <RouterLink :to="{ name: 'student' }"
+                        <RouterLink :to="{ name: 'reward' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 '">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>
-                            <span class="font-koulen">សិស្សចាប់រង្វាន់</span>
+                            <span class="font-koulen">រង្វាន់</span>
                         </RouterLink>
                     </li>
 

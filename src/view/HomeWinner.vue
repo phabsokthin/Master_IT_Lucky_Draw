@@ -2,90 +2,221 @@
     <div>
         <NavbarView />
     </div>
-    <div class="w-[90%] h-full p-6 mx-auto bg-gradient-to-r from-rose-400 to-red-500 pb-10">
-        <div class="my-2">
-            <h1 class=" text-[40px] text-center text-white font-koulen">ឱកាសសំណាង</h1>
-            <p class="text-[30px] text-center text-white font-koulen">Lucky Draw</p>
+
+    <div class="h-screen header finisher-header">
+
+        <div class="emoji-container">
+            <span v-for="(emoji, index) in emojis" :key="index" class="emoji" :style="getEmojiStyle()">
+                {{ emoji }}
+            </span>
         </div>
-
-        <div class="flex justify-center">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full md:w-[80%] lg:w-[80%] h-full">
-
-                <div class="h-full">
-                    <div class=" w-full max-w-[900px] mx-auto shadow-lg">
-                        <div class="relative flex justify-center border border-red-500 rounded-t-xl">
-                            <p
-                                class="w-full px-6 py-2 text-xl text-center text-orange-600 bg-white border-r border-red-500 font-koulen">
-                                ឱកាសសំណាងឈ្នះ
-                            </p>
-                            <p
-                                class="w-[40%] max-w-[400px] px-6 py-2 text-center text-orange-600 bg-white font-koulen text-xl">
-                                ចំនួនសំណាង
-                            </p>
+        <div class="md:w-[90%] lg:w-[90%] xl:w-[60%] h-full p-6 mx-auto md:-mt-28">
+            <div class="hidden md:block">
+                <!-- <h1 class=" text-[40px] text-center text-orange-400 font-koulen">ឱកាសសំណាង</h1>
+    <p class="text-[20px] text-center text-white font-koulen">Lucky Draw</p> -->
+                <div class="flex justify-center space-x-4 leading-10 ">
+                    <div class="z-40">
+                        <img src="@/assets/opotunity.png" class="w-[400px] h-auto object-contain" alt="">
+                        <div class="-mt-[18rem] ml-24">
+                            <img src="@/assets/luckydrawLogo.png" class="w-[240px] h-auto object-contain" alt="">
                         </div>
+                        <div class="-mt-[8.5rem] ml-36">
+                            <img src="@/assets/second.png" class="w-[150px] h-auto object-contain" alt="">
+                        </div>
+                    </div>
 
-                        <div class="flex justify-center">
-                            <div class="flex flex-col w-full border border-t-0 border-red-500 rounded-b-xl">
-                                <div v-for="reward in courseDocReward" :key="reward.id">
-                                    <div v-if="reward.qty !== 0" class="flex border-t border-red-500">
-                                        <p
-                                            class="w-full px-5 py-2 text-lg text-red-500 bg-white border-r border-red-500 font-koulen">
-                                            {{ reward?.courseName }}
-                                        </p>
-                                        <p
-                                            class="px-5 py-2 text-red-500 bg-white w-[40%] max-w-[400px] font-koulen text-xl">
-                                            {{ reward?.qty }} <span class="text-sm">សំណាង</span>
-                                        </p>
-                                    </div>
+                </div>
+            </div>
+
+
+            <div class="w-full ">
+                <div class="grid grid-cols-1 gap-3 md:flex">
+
+                    <div class="z-40 w-full mx-auto overflow-hidden bg-white border rounded-lg shadow-xl">
+                        <table class="w-full border border-separate rounded-t-lg">
+                            <thead>
+                                <tr class="bg-white">
+                                    <th
+                                        class="px-6 py-2 text-xl text-orange-600 border border-red-500 rounded-tl-lg font-koulen">
+                                        ឱកាសសំណាងឈ្នះ
+                                    </th>
+                                    <th
+                                        class="px-6 py-2 text-xl text-orange-600 border border-red-500 font-koulen w-[40%] max-w-[400px] rounded-tr-lg">
+                                        ចំនួនសំណាង
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(reward, index) in courseDocReward" :key="reward.id"
+                                    :class="index === courseDocReward.length - 1 ? 'rounded-bl-lg rounded-br-lg overflow-hidden' : ''">
+                                    <template v-if="reward.qty !== 0">
+                                        <td align="start"
+                                            class="px-5 py-2 text-lg text-red-500 border border-red-500 font-koulen">
+                                            {{ toKhmerNumberIndex(index + 1) }}. {{ reward?.courseName }}
+                                        </td>
+                                        <td align="center"
+                                            class="px-5 py-2 text-xl text-red-500 border border-red-500 font-koulen w-[40%] max-w-[400px]">
+                                            {{ toKhmerNumber(reward?.qty) }}<span class="text-[14px]">សំណាង</span>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="z-40">
+                        <div class="h-full bg-white rounded-lg shadow-xl">
+                            <div class="">
+                                <div class="text-center border-b border-red-500">
+                                    <p class="w-full px-6 py-2 text-xl text-center text-orange-600 font-koulen">
+                                        ម្ចាស់សំណាងថ្ងៃនេះ
+                                    </p>
                                 </div>
 
+                                <div class="relative flex flex-col items-center justify-center ">
+                                    <div class="w-[300px] ">
+                                        <img class="object-contain w-full"
+                                            src="@/assets/3d-rendering-of-opened-surprise-gift-box-png.webp"
+                                            alt="Lucky Draw" />
+                                    </div>
+
+                                    <div class="absolute top-24">
+                                        <div v-if="!isLoading">
+                                            <img v-if="!currentStudent" class="w-16"
+                                                src="@/assets/Animation - 1738921236754.gif" alt="Loaded animation">
+                                            <div v-else>
+                                                <div v-for="reward in currentStudent" :key="reward.id">
+                                                    <h2 class="mt-0 text-[28px] font-moul_regular text text-center font-[400]"
+                                                        :style="reward.studentName.includes(' ') || reward.studentName.includes('\n') ? 'text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.4);' : ''">
+                                                        <span v-html="formatName(reward.studentName)"></span>
+                                                    </h2>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- Show loading animation if still loading -->
+                                        <div v-else>
+                                            <img class="w-16" src="@/assets/Animation - 1738921532229.gif"
+                                                alt="Loading animation">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="absolute bottom-20">
+                                        <!-- <button v-if="!isLoading" @click="handleRandomFindRewardToday"
+                                            class="shadow-2xl bg-reward">
+                                            ឈ្នះសំណាងរៀនឥតគិតថ្លៃ
+                                        </button>
+                                        <button v-else disabled class="shadow-2xl bg-reward">
+                                        </button> -->
+
+                                        <button v-if="!isLoading" @click="handleRandomFindRewardToday" class="p-2 px-4 text-orange-600 bg-gradient-to-b from-yellow-300 to-yellow-400 rounded-full 
+               shadow-[0_4px_6px_rgba(0,0,0,0.3),_0_1px_3px_rgba(0,0,0,0.1)] 
+               font-koulen text-md transition-all 
+               hover:shadow-[0_6px_12px_rgba(0,0,0,0.4),_0_2px_4px_rgba(0,0,0,0.1)] 
+               hover:bg-yellow-400 active:translate-y-1">
+                                            ឈ្នះសំណាងរៀនឥតគិតថ្លៃ
+                                        </button>
+
+                                        <button v-else disabled class=" cursor-not-allowed p-2 px-4 text-orange-600 bg-gradient-to-b from-yellow-300 to-yellow-300 rounded-full 
+               shadow-[0_4px_6px_rgba(0,0,0,0.3),_0_1px_3px_rgba(0,0,0,0.1)] 
+               font-koulen text-md transition-all">
+                                            ឈ្នះសំណាងរៀនឥតគិតថ្លៃ....
+
+                                        </button>
+
+                                        <!-- <button @click="clearCurrentStudentFromLocalStorage"
+                                            class="p-2 bg-orange-500 hover:bg-orange-600">Clear
+                                            Data</button> -->
+
+
+
+
+                                    </div>
+
+
+                                </div>
+
+
                             </div>
                         </div>
                     </div>
+
+
+
                 </div>
 
-                <!-- Card 2 -->
-                <div class="relative flex justify-center h-full">
-                    <div class="bg-white  w-full md:w-[80%] lg:w-[50%] h-auto mx-auto shadow-lg">
-                        <div class="text-center">
-                            <p
-                                class="w-full px-6 py-2 text-xl text-center text-orange-600 bg-white border-b border-red-500 font-koulen">
-                                ម្ចាស់សំណាងថ្ងៃនេះ
-                            </p>
+                <div class="grid gap-1 px-10 mt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div class="relative w-full">
+                        <div
+                            class="absolute  w-[80%] mx-auto p-1  border border-red-500 -top-4 bg-white left-6 rounded-lg">
+                            <div class="text-sm text-center text-red-500 font-koulen ">បញ្ចុះ <span
+                                    class="text-[20px]">៧០%</span></div>
+                        </div>
+                        <div
+                            class="flex flex-col justify-end h-16 align-bottom bg-white border border-red-500 rounded-l-lg">
+                            <h1 class="text-[30px] text-red-500 text-center font-koulen">០៥ <span
+                                    class="text-[20px]">សំណាង</span></h1>
                         </div>
 
-                        <div class="flex flex-col items-center justify-center">
-                            <div class="w-[300px]">
-                                <img class="" src="@/assets/luckyDraw.png" alt="Lucky Draw" />
-                            </div>
-
-                            <div class="absolute flex justify-center mt-4 bottom-24">
-                                <button v-if="!isLoading" @click="handleRandomFindRewardToday"
-                                    class="shadow-2xl bg-reward">
-                                    ឈ្នះសំណាងរៀនឥតគិតថ្លៃ
-                                </button>
-                                <button v-else disabled class="shadow-2xl bg-reward">
-                                    ឈ្នះសំណាងរៀនឥតគិតថ្លៃ....
-                                </button>
-                            </div>
-                        </div>
-
-                        <button @click="clearCurrentStudentFromLocalStorage"
-                            class="p-2 bg-red-500 hover:bg-red-600">Clear Data</button>
                     </div>
-                </div>
+                    <div class="relative w-full">
+                        <div
+                            class="absolute  w-[80%] mx-auto p-1  border border-red-500 -top-4 bg-white left-6 rounded-lg">
+                            <div class="text-sm text-center text-red-500 font-koulen ">១០ <span
+                                    class="text-[20px]">ពិន្ទុ</span></div>
+                        </div>
+                        <div class="flex flex-col justify-end h-16 align-bottom bg-white border border-red-500 ">
+                            <h1 class="text-[30px] text-red-500 text-center font-koulen">២០ <span
+                                    class="text-[20px]">សំណាង</span></h1>
+                        </div>
 
+                    </div>
+                    <div class="relative w-full">
+                        <div
+                            class="absolute  w-[80%] mx-auto p-1  border border-red-500 -top-4 bg-white left-6 rounded-lg">
+                            <div class="text-sm text-center text-red-500 font-koulen ">០៥ <span
+                                    class="text-[20px]">ពិន្ទុ</span></div>
+                        </div>
+                        <div class="flex flex-col justify-end h-16 align-bottom bg-white border border-red-500 ">
+                            <h1 class="text-[30px] text-red-500 text-center font-koulen">៣០ <span
+                                    class="text-[20px]">សំណាង</span></h1>
+                        </div>
+
+                    </div>
+                    <div class="relative w-full">
+                        <div
+                            class="absolute  w-[80%] mx-auto p-1  border border-red-500 -top-4 bg-white left-6 rounded-lg">
+                            <div class="text-sm text-center text-red-500 font-koulen ">០២ <span
+                                    class="text-[20px]">ពិន្ទុ</span></div>
+                        </div>
+                        <div
+                            class="flex flex-col justify-end h-16 align-bottom bg-white border border-red-500 rounded-r-lg">
+                            <h1 class="text-[30px] text-red-500 text-center font-koulen">២០០ <span
+                                    class="text-[20px]">សំណាង</span></h1>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
+
         </div>
 
-        <div v-for="reward in currentStudent" :key="reward.id">
-            <div>studentName {{ reward?.studentName }}</div>
-            <div>phone {{ reward?.phone }}</div>
-            <div>email {{ reward?.email }}</div>
-            <div>qty: {{ reward?.qty }}</div>
-            <div>qty: {{ reward?.courseName }}</div>
-        </div>
+        <!-- <div v-for="reward in currentStudent" :key="reward.id">
+
+<div>studentName {{ reward?.studentName }}</div>
+<div>phone {{ reward?.phone }}</div>
+<div>email {{ reward?.email }}</div>
+<div>qty: {{ reward?.qty }}</div>
+<div>qty: {{ reward?.courseName }}</div>
+
+</div> -->
+        <div class="bg"></div>
     </div>
+
 </template>
 
 
@@ -112,6 +243,9 @@ export default {
         const endOfDay = new Date(today.setHours(23, 59, 59, 999));
         const startTimestamp = Timestamp.fromDate(startOfDay);
         const endTimestamp = Timestamp.fromDate(endOfDay);
+
+        const emojis = ref(["🥳", "💖", "🥇", "🎁", "🎉", "✨", "😍", "🎓"]); // Customize emojis
+
 
         const fetchCourse = () => {
             try {
@@ -153,16 +287,6 @@ export default {
                 console.error("Error fetching today's rewards: ", error);
             }
         };
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -230,53 +354,65 @@ export default {
 
 
 
+
         const handleRandomFindRewardToday = async () => {
             isLoading.value = true;
-            try {
-                if (todaysRewards.value.length === 0) {
-                    alert("No rewards available for today.");
-                    return;
+
+            setTimeout(async () => {
+                try {
+                    if (todaysRewards.value.length === 0) {
+                        alert("No rewards available for today.");
+                        isLoading.value = false;
+                        return;
+                    }
+
+                    console.log("Today's rewards:", todaysRewards.value); // Debugging
+
+                    let foundValidStudent = false;
+
+                    while (studentIndex.value < todaysRewards.value.length) {
+                        const selectedReward = todaysRewards.value[studentIndex.value];
+
+                        console.log("Checking student:", selectedReward);
+
+                        if (!selectedReward || !selectedReward.id || selectedReward.qty <= 0) {
+                            console.warn("Skipping student due to invalid data or out-of-stock:", selectedReward);
+                            studentIndex.value++;
+                            continue;
+                        }
+
+                        const success = await decreaseCourseQty(selectedReward.courseName);
+
+                        if (success) {
+                            currentStudent.value = [{ ...selectedReward }];
+                            saveCurrentStudentToLocalStorage();
+                            studentIndex.value++;
+                            saveStudentIndexToLocalStorage();
+                            foundValidStudent = true;
+                            break;
+                        } else {
+                            studentIndex.value++;
+                        }
+                    }
+
+                    if (!foundValidStudent) {
+                        alert("No valid students with available rewards.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching rewards: ", error);
+                } finally {
+                    isLoading.value = false;
                 }
-
-                if (studentIndex.value >= todaysRewards.value.length) {
-                    alert("All rewards for today have been shown.");
-                    return;
-                }
-
-                const selectedReward = todaysRewards.value[studentIndex.value];
-
-                if (!selectedReward || !selectedReward.id) {
-                    console.error("Selected reward is missing 'id' or is undefined.");
-                    return;
-                }
-
-                currentStudent.value = [{
-                    id: selectedReward.id,
-                    studentName: selectedReward.studentName,
-                    phone: selectedReward.phone,
-                    email: selectedReward.email,
-                    qty: selectedReward.qty,
-                    courseName: selectedReward.courseName,
-                }];
-
-                saveCurrentStudentToLocalStorage();
-
-                await decreaseCourseQty(selectedReward.courseName);
-
-                studentIndex.value++; // Increment index
-                saveStudentIndexToLocalStorage(); // Save updated index
-
-            } catch (error) {
-                console.error("Error fetching rewards: ", error);
-            } finally {
-                isLoading.value = false;
-            }
+            }, 5000); // 5-second delay
         };
+
+
+
 
         const decreaseCourseQty = async (courseName) => {
             if (!courseName) {
                 console.warn("Course name is missing. Skipping quantity update.");
-                return;
+                return false;
             }
 
             try {
@@ -285,7 +421,7 @@ export default {
 
                 if (coursesSnapshot.empty) {
                     console.warn(`Course '${courseName}' not found.`);
-                    return;
+                    return false;
                 }
 
                 const courseDoc = coursesSnapshot.docs[0];
@@ -293,26 +429,30 @@ export default {
                 const currentQty = courseDoc.data().qty;
 
                 if (currentQty <= 0) {
-                    console.warn(`Course '${courseName}' has no stock left.`);
-                    return;
+                    console.log(`Course '${courseName}' has no stock left.`);
+                    return false;
                 }
 
-                await updateDoc(courseRef, {
-                    qty: increment(-1)
-                });
-
+                await updateDoc(courseRef, { qty: increment(-1) });
                 console.log(`Updated course '${courseName}': qty -1 (New qty: ${currentQty - 1})`);
+
+                return true; // Stock successfully updated
 
             } catch (error) {
                 console.error("Error updating course quantity:", error);
+                return false;
             }
         };
+
+
+
 
         onMounted(() => {
             fetchCourse();
             fetchTodaysRewards();
             loadCurrentStudentFromLocalStorage();
-            loadStudentIndexFromLocalStorage(); // Load studentIndex from localStorage
+            loadStudentIndexFromLocalStorage();
+            displayBackground();
         });
 
         onUnmounted(() => {
@@ -320,6 +460,74 @@ export default {
         });
 
         watch(studentIndex, saveStudentIndexToLocalStorage); // Watch studentIndex changes
+
+
+
+
+        const getEmojiStyle = () => {
+            return {
+                left: `${Math.random() * 100}vw`,
+                animationDuration: `${Math.random() * 7 + 5}s`
+            };
+        };
+
+        const displayBackground = () => {
+            const script = document.createElement("script");
+            script.src = "/js/finisher-header.es5.min.js"; // Ensure the file is in public/js
+            script.onload = () => {
+                if (window.FinisherHeader) {
+                    const container = document.createElement("div");
+                    container.id = "finisher-header-container"; // Give it an ID for styling
+
+                    // Append the container to the body or specific element where you want the background
+                    document.body.appendChild(container);
+
+                    new window.FinisherHeader({
+                        count: 90,
+                        size: { min: 1, max: 20, pulse: 0 },
+                        speed: { x: { min: 0, max: 0.4 }, y: { min: 0, max: 0.1 } },
+                        colors: {
+                            background: "#f40c0c", // Background color
+                            particles: ["#ffffff", "#87ddfe", "#acaaff", "#1bffc2", "#f88aff"]
+                        },
+                        blending: "screen",
+                        opacity: { center: 0, edge: 0.4 },
+                        skew: 0,
+                        shapes: ["c", "s", "t"],
+                        container: container // Add the container for the FinisherHeader to render in
+                    });
+                }
+            };
+            document.body.appendChild(script);
+        };
+
+
+        //khmer number
+
+        const toKhmerNumber = (num) => {
+            const khmerDigits = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+            // Ensure the number has at least two digits by padding with a zero if needed.
+            return num.toString().padStart(2, '0')  // Pad to two digits if needed
+                .split("")  // Split the number into individual digits.
+                .map(digit => khmerDigits[digit])  // Map the digits to Khmer numerals.
+                .join("");  // Join the array back into a string.
+        };
+
+        const toKhmerNumberIndex = (num) => {
+            const khmerDigits = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+            return num.toString().split("").map(digit => khmerDigits[digit]).join("");
+        };
+
+
+        //for br space student
+
+        const formatName = (name) => {
+            // Check if the name contains a space and replace it with a <br> tag
+            return name.replace(' ', '<br>'); // Replace first space with <br> tag
+        }
+
+
+
 
         return {
             rewards,
@@ -329,8 +537,128 @@ export default {
             courseDocReward,
             todaysRewards,
             handleRandomFindRewardToday,
-            clearCurrentStudentFromLocalStorage
+            clearCurrentStudentFromLocalStorage,
+
+            emojis,
+            getEmojiStyle,
+            toKhmerNumber,
+            toKhmerNumberIndex,
+            formatName
         };
     },
 };
 </script>
+
+
+
+
+<style scoped>
+/* Full-screen Finisher Header */
+
+
+.text {
+    -webkit-text-stroke-width: 0.8px;
+    -webkit-text-stroke-color: white;
+    -webkit-text-fill-color: red;
+}
+
+body {
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling */
+    height: 100vh;
+    /* Ensure the height is full */
+}
+
+#finisher-header-container {
+    position: fixed;
+    /* Ensures it covers the entire screen */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    /* Full width */
+    height: 100vh;
+    /* Full height */
+    z-index: -1;
+    /* Ensure it stays behind other content */
+}
+
+.bg {
+    position: fixed;
+    /* Ensures it covers the entire viewport */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    /* Ensures the full height of the viewport */
+    background: #fff;
+    /* Background color */
+    opacity: 0.1;
+    filter: contrast(7);
+    /* Apply contrast filter */
+    --mask: linear-gradient(red, rgba(0, 0, 0, 0.45));
+    /* Mask gradient */
+
+}
+
+.bg::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: radial-gradient(#676767, transparent) 0 0/1em 1em space;
+    /* Radial gradient */
+    -webkit-mask: var(--mask);
+    /* Webkit mask for better cross-browser support */
+    mask: var(--mask);
+    /* Apply mask */
+    content: "";
+
+}
+
+
+
+
+/* Floating Emoji Overlay */
+.emoji-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Emoji animation */
+.emoji {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.8;
+    animation: floatUp ease-in infinite;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(-10vh);
+        opacity: 1;
+    }
+}
+
+/* Content should be above the background */
+.content {
+    position: relative;
+    z-index: 10;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+}
+</style>
