@@ -18,6 +18,6 @@ export function handleMessageError(msg){
 export function handleMessageInfo(msg){
     ElMessage({
         message: msg,
-        type: "info"
+        type: "warning"
     })
 }

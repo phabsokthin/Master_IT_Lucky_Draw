@@ -1,6 +1,6 @@
 <template>
 
-    <div  class="fixed inset-0 z-10 overflow-y-auto">
+    <div  class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity">
                 <div @click="handleClose" class="absolute inset-0 bg-gray-500 opacity-75 cursor-pointer"></div>

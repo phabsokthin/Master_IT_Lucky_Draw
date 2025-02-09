@@ -117,14 +117,7 @@
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         ឈ្មោះសិស្ស
                                     </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        លេខរង្វាន់
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        តម្លៃរង្វាន់
-                                    </th>
+                                 
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         លេខទូរស័ព្ទ
@@ -133,10 +126,7 @@
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         អុីម៉ែល
                                     </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        អាស័យដ្ឋាន
-                                    </th>
+                                    
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         កាលបរិច្ឆេត
@@ -150,64 +140,53 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <!-- Render rewards dynamically -->
-                                <template v-for="reward in rewards" :key="reward.id">
-                                    <template v-for="student in reward.students" :key="student.id">
-                                        <tr v-if="student.studentName">
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium capitalize font-koulen whitespace-nowrap dark:text-gray-400">
-                                                <div v-if="reward.courseName">
-                                                    {{ reward.courseName }}
-                                                </div>
-                                                <div v-else>
-                                                    <p class="text-red-500">មិនមាន</p>
-                                                </div>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
-                                                {{ student.studentName }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
-                                                {{ reward.rewardNo }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-orange-500 font-koulen whitespace-nowrap dark:text-gray-400">
-                                                {{ reward.rewardValue }} ភាគរយ
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                                {{ student.phone }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                                {{ student.email }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                                {{ student.address }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
-                                                {{ reward.createdAt }}
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400 text-end">
-                                                <button @click="handleCurrentViewDetails(reward, student)"
-                                                    class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">
-                                                    មើល
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </template>
-                                </template>
 
+                                <tr v-for="re in rewards" :key="re">
+                                   
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
+                                        {{ re.courseName }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
+                                        {{ re.studentName }}
+                                    </td>
+                                   
+                                  
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                        {{ re.phone }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
+                                        {{ re.email }}
+                                    </td>
+                                    
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                        {{ re.createdAt ? new Date(re.createdAt.seconds *
+                                            1000).toLocaleDateString('en-US', {
+                                                weekday: 'short',
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                            }) : 'N/A' }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400 text-end">
+                                        <!-- <button @click="handleCurrentViewDetails(re)"
+                                            class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">
+                                            មើល
+                                        </button> -->
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Display Total Students -->
                     <div class="px-4 py-3">
-                        <p class="font-koulen">សរុបសិស្ស: <span class="text-red-500">{{ totalStudents }}</span> នាក់</p>
+                        <p class="font-koulen">សរុបសិស្ស: <span class="text-red-500">{{ rewards.length }}</span> នាក់</p>
                     </div>
                 </div>
             </div>
@@ -221,7 +200,7 @@
 import { projectFirestore } from '@/config/config';
 import { handleMessageError } from '@/message';
 import { collection, query, where, getDocs, orderBy, doc, Timestamp } from 'firebase/firestore';
-import { watch, computed } from 'vue';
+import { computed } from 'vue';
 import { onMounted } from 'vue';
 import ViewStudentRewardDetailsModal from '@/components/admin/ViewStudentRewardDetailModal.vue';
 import { ref } from 'vue';
@@ -252,72 +231,52 @@ export default {
             }));
         };
 
-        // Fetch student information from a nested subcollection
-        const getStudentFromReward = async (rewardDocRef) => {
-            const studentsCollection = collection(rewardDocRef, "students"); // Assuming students are a subcollection inside rewards
-            const studentSnapshot = await getDocs(studentsCollection);
-            const students = studentSnapshot.docs.map(studentDoc => ({
-                id: studentDoc.id,
-                ...studentDoc.data(),
-            }));
-            return students;
-        };
-
-        // Fetch rewards based on filters (including nested student data)
         const fetchRewards = async () => {
-            if (!rewardTypeId.value) return;
+            try {
+                if (!rewardTypeId.value) return;
 
-            const rewardTypeDocRef = doc(projectFirestore, "rewardTypes", rewardTypeId.value);
-            const rewardsSubcollection = collection(rewardTypeDocRef, "rewards");
+                const rewardTypeDocRef = doc(projectFirestore, "rewardTypes", rewardTypeId.value);
+                const rewardsSubcollection = collection(rewardTypeDocRef, "rewards");
 
-            let rewardsQuery = query(rewardsSubcollection, orderBy("createdAt", "desc"));
+                let rewardsQuery = query(rewardsSubcollection, orderBy("createdAt", "desc"));
 
-            if (startDate.value && endDate.value) {
-                const start = Timestamp.fromDate(new Date(startDate.value));
-                const end = Timestamp.fromDate(new Date(endDate.value + "T23:59:59"));
+                if (startDate.value && endDate.value) {
+                    const start = Timestamp.fromDate(new Date(startDate.value));
+                    const end = Timestamp.fromDate(new Date(endDate.value + "T23:59:59"));
 
-                rewardsQuery = query(
-                    rewardsQuery,
-                    where("createdAt", ">=", start),
-                    where("createdAt", "<=", end)
-                );
-            }
+                    rewardsQuery = query(
+                        rewardsQuery,
+                        where("createdAt", ">=", start),
+                        where("createdAt", "<=", end)
+                    );
+                }
 
-            const rewardsSnapshot = await getDocs(rewardsQuery);
+                const rewardsSnapshot = await getDocs(rewardsQuery);
 
-            if (rewardsSnapshot.empty) {
-                handleMessageError(`មិនមានទិន្ន័យសិស្សចន្លោះ ${startDate.value} ដល់ ${endDate.value}ទេ។ ព្យាយាមម្តងទៀត`);
-                rewards.value = [];
-            }
-            rewards.value = await Promise.all(
-                rewardsSnapshot.docs.map(async (doc) => {
-                    const rewardData = doc.data();
-                    const students = await getStudentFromReward(doc.ref); // Fetch students from nested subcollection
-                    return {
+                if (rewardsSnapshot.empty) {
+                    handleMessageError(`មិនមានទិន្ន័យសិស្សចន្លោះ ${startDate.value} ដល់ ${endDate.value}ទេ។ ព្យាយាមម្តងទៀត`);
+                    rewards.value = [];
+                } else {
+                    rewards.value = rewardsSnapshot.docs.map(doc => ({
                         id: doc.id,
-                        ...rewardData,
-                        createdAt: rewardData.createdAt.toDate().toLocaleDateString(),
-                        students: students.length > 0 ? students : ['No Student'], // Return students as an array
-                    };
-                })
-            );
+                        ...doc.data(),
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching rewards:", error);
+                handleMessageError("កំហុសក្នុងការទាញយកទិន្ន័យ។ សូមព្យាយាមម្តងទៀត។");
+            }
         };
 
         // Call this function when the component is mounted
         onMounted(() => {
             getRewardTypes();
-            // startDate.value = getCurrentDate();
-            // endDate.value = getCurrentDate();
-        });
 
-        // Watch for changes in the reward type or dates to refetch rewards
-        watch([rewardTypeId, startDate, endDate], () => {
-            fetchRewards();
         });
 
         // Handle the date filter click
         const handleFilterDate = () => {
-            fetchRewards(); // Refetch rewards based on the selected date range
+            fetchRewards();
         };
 
         // Computed property to calculate the total number of students
@@ -342,9 +301,8 @@ export default {
 
         //handle View Student Modal
 
-        const handleCurrentViewDetails = (reward, item) => {
+        const handleCurrentViewDetails = (reward) => {
             rewardDoc.value = reward
-            studentDoc.value = item
             currentComponent.value = "ViewStudentRewardDetailsModal"
         };
 

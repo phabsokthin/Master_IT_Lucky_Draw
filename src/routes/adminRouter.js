@@ -10,6 +10,7 @@ import CourseView from '@/admin/CourseView.vue';
 import ReportView from '@/admin/ReportView.vue';
 import ViewStudentDetails from '@/admin/ViewStudentDetails.vue';
 import Student from '@/admin/StudentView.vue'
+import DashboardReward from '@/admin/DashboardReward.vue'
 
 const requiresAuth = (to, from, next) => {
     const user = projectAuth.currentUser;
@@ -79,6 +80,12 @@ const routes = [
                 name: 'viewStudentDetails',
                 component: ViewStudentDetails
             },
+            {
+                path: '/dashboardReward',
+                name: 'dashboardReward',
+                component: DashboardReward
+            },
+            
             {
                 path: 'report',
                 name: 'report',

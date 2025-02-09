@@ -44,8 +44,6 @@
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                  
-                                   
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         ឈ្មោះសិស្ស
@@ -56,11 +54,11 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                      លេខទូរស័ព្ទ
+                                        លេខទូរស័ព្ទ
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                      អុីម៉ែល
+                                        អុីម៉ែល
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
@@ -79,7 +77,6 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <template v-for="rewardType in paginatedRewardDocs" :key="rewardType.id">
                                     <tr v-for="rewards in rewardType.rewards" :key="rewards.id">
-                                       
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                             {{ rewards.studentName }}
@@ -96,7 +93,6 @@
                                             class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                             {{ rewards.email }}
                                         </td>
-                                        
                                         <td
                                             class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
                                             {{ rewards.rewardDescription }}
@@ -111,14 +107,8 @@
                                                     day: 'numeric',
                                                 }) : 'N/A' }}
                                         </td>
-
-                                        
                                         <td>
                                             <div class="flex justify-end pr-2 space-x-2">
-                                                <!-- <RouterLink :to="{name: 'viewStudentDetails', params: {id: rewardType.id}}"
-                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">មើលលម្អិត</RouterLink> -->
-                                                <!-- <button @click="handleAddQtyModal(rewardType.id, rewards)"
-                                                    class="p-2 text-xs text-white bg-yellow-500 rounded-full font-koulen hover:bg-yellow-600">បន្ថែម</button> -->
                                                 <button @click="handleDelete(rewardType.id, rewards.id)"
                                                     class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                                 <button @click="handleUpdate(rewardType.id, rewards)"
@@ -130,6 +120,8 @@
                             </tbody>
                         </table>
                     </div>
+
+              
                     <!-- Pagination -->
                     <div class="px-4 py-1">
                         <nav class="flex items-center space-x-1">
@@ -154,8 +146,8 @@
         </div>
     </div>
 
-    <component :is="currentComponent" @close="currentComponent = ''" :rewardTypeId="rewardTypeId"
-        :itemData="itemData" :rewardTypesId="rewardTypesId" :itemQty="itemQty" />
+    <component :is="currentComponent" @close="currentComponent = ''" :rewardTypeId="rewardTypeId" :itemData="itemData"
+        :rewardTypesId="rewardTypesId" :itemQty="itemQty" />
 </template>
 
 <script>
@@ -174,7 +166,6 @@ export default {
         AddRewardModal,
         AddRewardTypeModal,
         AddRewardQtyModal
-
     },
     setup() {
         const rewardDocs = ref([]);
@@ -189,7 +180,7 @@ export default {
 
         // Pagination state
         const currentPage = ref(1);
-        const itemsPerPage = ref(4);
+        const itemsPerPage = ref(2);
 
         const rewardTypesId = ref("");
         const itemQty = ref("");
@@ -207,8 +198,7 @@ export default {
             rewardUnsubscribers.forEach((unsubscribe) => unsubscribe());
         });
 
-
-        //fetct data real-time
+        // Fetch data real-time
         const fetchReward = () => {
             const orderByField = 'rewardNo';
 
@@ -254,18 +244,32 @@ export default {
 
         // Search logic
         const filteredRewardDocs = computed(() => {
-            const lowerSearch = search.value.toLowerCase();
-            return rewardDocs.value.filter((rewardDoc) => {
-                return rewardDoc.rewards.some((reward) => {
-                    const rewardTypeMatch = rewardDoc.rewardType.toLowerCase().includes(lowerSearch);
-                    const rewardDescriptionMatch = rewardDoc.rewardDescription.toLowerCase().includes(lowerSearch);
-                    const rewardNoMatch = reward.rewardNo && reward.rewardNo.toString().includes(lowerSearch);
+    const lowerSearch = search.value.toLowerCase();
 
-                    return rewardTypeMatch || rewardDescriptionMatch || rewardNoMatch;
-                });
-            });
+    if (!lowerSearch) {
+        return rewardDocs.value; // Return all rewards if search is empty
+    }
+
+    return rewardDocs.value.map((rewardDoc) => {
+        const filteredRewards = rewardDoc.rewards.filter((reward) => {
+            return (
+                reward.studentName?.toLowerCase().includes(lowerSearch) ||
+                reward.courseName?.toLowerCase().includes(lowerSearch) ||
+                reward.phone?.toLowerCase().includes(lowerSearch) ||
+                reward.email?.toLowerCase().includes(lowerSearch) ||
+                reward.rewardDescription?.toLowerCase().includes(lowerSearch)
+            );
         });
 
+        // Only return objects with matching rewards
+        return filteredRewards.length > 0
+            ? {
+                ...rewardDoc,
+                rewards: filteredRewards, // Keep only filtered rewards
+              }
+            : null;
+    }).filter(Boolean); // Remove null values
+});
 
         // Pagination logic
         const totalPages = computed(() => Math.ceil(filteredRewardDocs.value.length / itemsPerPage.value));
@@ -295,16 +299,16 @@ export default {
         const handleAddReward = (component) => {
             currentComponent.value = component;
             itemData.value = null;
-            rewardTypeId.value = null
+            rewardTypeId.value = null;
         };
 
         const handleUpdate = (rewardType, item) => {
             currentComponent.value = 'AddRewardModal';
-            rewardTypeId.value = rewardType
-            itemData.value = item
+            rewardTypeId.value = rewardType;
+            itemData.value = item;
         };
 
-        //handle delete
+        // Handle delete
         const handleDelete = async (itemType, id) => {
             try {
                 const { deleteDocs } = useDocument('rewardTypes', itemType, 'rewards');
@@ -319,13 +323,12 @@ export default {
             }
         };
 
-        //add qty modal
-
+        // Add qty modal
         const handleAddQtyModal = (rewardTypeId, item) => {
             currentComponent.value = 'AddRewardQtyModal';
-            rewardTypesId.value = rewardTypeId
-            itemQty.value = item
-        }
+            rewardTypesId.value = rewardTypeId;
+            itemQty.value = item;
+        };
 
         return {
             rewardDocs,
@@ -344,8 +347,8 @@ export default {
             rewardTypeId,
             handleAddQtyModal,
             rewardTypesId,
-            itemQty
-           
+            itemQty,
+            filteredRewardDocs
         };
     },
 };

@@ -9,7 +9,7 @@
             <path
                 d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3" />
         </svg>
-        <div class="font-koulen">បញ្ចីសិស្សចាប់រង្វាន់</div>
+        <div class="font-koulen">បញ្ចីផ្ទាំងបង្ហាញរង្វាន់</div>
     </div>
 
     <div class="flex flex-col">
@@ -34,8 +34,8 @@
                             </div>
                         </div>
                         <div class="space-x-2">
-                            <button class="btn_add" @click="handleAddRewardType('AdRewardTypeForStudentModal')">+
-                                បន្ថែមរង្វាន់</button>
+                            <button class="btn_add" @click="handleAddRewardType('AddDashboardRewardModal')">+
+                                បន្ថែមផ្ទាំងរង្វាន់</button>
                             <!-- <button class="btn_add" @click="handleAddReward('AddRewardModal')">+ បង្កើតថ្មី</button> -->
                         </div>
                     </div>
@@ -47,12 +47,18 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        ប្រភេទរង្វាន់
+                                        ចំនួនសំណាង
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
-                                        ពិពណ៌នា
+                                        ចំនួនពិន្ទុ
                                     </th>
+                                  
+                                   
+                                    <!-- <th scope="col"
+                                        class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
+                                        ពិពណ៌នា
+                                    </th> -->
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         កាលបរិច្ឆេត
@@ -64,18 +70,25 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr v-for="rewards in data" :key="rewards.id">
+                                <tr v-for="reward in data" :key="reward.id">
+                                  
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                        {{ rewards.rewardType }}
+                                        {{ reward.qtyLucky }}
                                     </td>
                                     <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                        {{ rewards.rewardDescription }}
+                                        class="px-6 py-4 text-sm font-medium text-green-500 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ reward.scores }}
                                     </td>
+                                   
+                                    
+                                    <!-- <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                        {{ reward.rewardDescription }}
+                                    </td> -->
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                        {{ rewards.createdAt ? new Date(rewards.createdAt.seconds *
+                                        {{ reward.createdAt ? new Date(reward.createdAt.seconds *
                                             1000).toLocaleDateString('en-US', {
                                                 weekday: 'short', year: 'numeric', month:
                                                     'short', day: 'numeric'
@@ -83,11 +96,9 @@
                                     </td>
                                     <td>
                                         <div class="flex justify-end pr-2 space-x-2">
-                                            <!-- <RouterLink :to="{name: 'student', params: {id: rewards.id}}"
-                                            class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600"> + សិស្សចាប់រង្វាន់</RouterLink> -->
-                                            <button @click="handleDelete(rewards.id)"
+                                            <button @click="handleDelete(reward.id)"
                                                 class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
-                                            <button @click="handleUpdate(rewards)"
+                                            <button @click="handleUpdate(reward)"
                                                 class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
                                         </div>
                                     </td>
@@ -96,7 +107,7 @@
                         </table>
                     </div>
 
-          
+
 
                     <!-- Pagination -->
                     <div class="px-4 py-1">
@@ -114,7 +125,7 @@
                                 {{ page }}
                             </button>
 
-                            <!-- Next Button --> 
+                            <!-- Next Button -->
                             <button type="button" @click="loadNextPage" :disabled="currentPage === totalPages"
                                 class="p-2.5 inline-flex items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                                 <span aria-hidden="true">»</span>
@@ -127,51 +138,51 @@
         </div>
     </div>
 
-    <component :is="currentComponent" @close="currentComponent=''" :updateRewardType="updateRewardType" :showReatimeData="showReatimeData"/>
+    <component :is="currentComponent" @close="currentComponent = ''" :rewardDetail="rewardDetail"
+        :showReatimeData="showReatimeData" />
 </template>
 
 
 <script>
-import { useFirestorePagination } from '@/firebase/useFirestorePagination'; 
+
+import { useFirestorePagination } from '@/firebase/useFirestorePagination';
 import useCollectionSearch from '@/firebase/useCollectionSearch'
 import { watch } from 'vue';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
-import AdRewardTypeForStudentModal from '@/components/admin/AdRewardTypeForStudentModal.vue';
-import { handleMessageError, handleMessageSuccess } from '@/message';
-import checkRewardTypeExist from '@/firebase/checkRewardTypeExist'
+
+import {handleMessageSuccess } from '@/message';
 import useCollection from '@/firebase/useCollection';
+import AddDashboardRewardModal from '@/components/admin/AddDashboardRewardModal.vue';
 export default {
     components: {
-        AdRewardTypeForStudentModal
+        AddDashboardRewardModal
     },
     setup() {
-        
+
         const currentComponent = ref("")
         const searchText = ref("")
-        const updateRewardType = ref("")
+        const rewardDetail = ref("")
         //for search resualt
         const searchResults = ref([]);
-        
-        // const showReatimeData = ref("")
-      
-        //use paginate
-        const { data, currentPage, pageRange, totalPages, loadPreviousPage, loadNextPage, goToPage, fetchTotalPages, getDataRealTime } = useFirestorePagination('rewardTypes', 10);
-        const { deleteDocs } = useCollection("rewardTypes");
 
-        
+        // const showReatimeData = ref("")
+
+        //use paginate
+        const { data, currentPage, pageRange, totalPages, loadPreviousPage, loadNextPage, goToPage, fetchTotalPages, getDataRealTime } = useFirestorePagination('rewardDashboard', 10);
+        const { deleteDocs } = useCollection("rewardDashboard");
+
+
         onMounted(() => {
             fetchTotalPages();
             getDataRealTime(currentPage.value);
         });
-        
-
 
         // Search functionality
         watch(searchText, async (newVal) => {
             if (newVal.trim()) {
                 currentPage.value = 1; // Reset current page to 1 on search
-                const { documents } = useCollectionSearch('rewardTypes', newVal.trim().toLowerCase(), 'rewardType');
+                const { documents } = useCollectionSearch('rewardDashboard', newVal.trim().toLowerCase(), 'qtyLucky');
                 watch(documents, () => {
                     searchResults.value = documents.value;
                     totalPages.value = Math.ceil(searchResults.value.length / 10); // Update totalPages based on search result count
@@ -196,36 +207,29 @@ export default {
         //add reward
         const handleAddRewardType = (component) => {
             currentComponent.value = component;
+            rewardDetail.value = null
             // getDataRealTime(currentPage.value);
-            showReatimeData();
+
         };
 
         //handle update
 
         const handleUpdate = (item) => {
-            currentComponent.value = 'AdRewardTypeForStudentModal';
-            updateRewardType.value = item
+            currentComponent.value = 'AddDashboardRewardModal';
+            rewardDetail.value = item
             // getDataRealTime(currentPage.value);
-            showReatimeData();
 
-            
         }
 
         //hanlde delete
         const handleDelete = async (id) => {
-            
             try {
                 if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
                     if (id) {
-                        const hasNoAssociatedRewards = await checkRewardTypeExist(id, 'rewardTypes');
-                        if (hasNoAssociatedRewards) {
-                            await deleteDocs(id);
-                            handleMessageSuccess("បានលុបប្រភេទរង្វាន់ដោយជោគជ័យ");
-                            console.log(getDataRealTime(currentPage.value));
-                            getDataRealTime(currentPage.value);
-                        } else {
-                            handleMessageError("អ្នកមិនអាចលុបប្រភេទរង្វាន់នេះបានទេ។ មានរង្វាន់ដែលពាក់ព័ន្ធជាមួយវា។");
-                        }
+                        await deleteDocs(id);
+                        handleMessageSuccess("បានលុបផ្ទាំងរង្វាន់ដោយជោគជ័យ");
+                        console.log(getDataRealTime(currentPage.value));
+                        getDataRealTime(currentPage.value);
                     }
                 }
             } catch (err) {
@@ -233,8 +237,6 @@ export default {
             }
         };
 
-
-    
         return {
             data,
             currentPage,
@@ -247,10 +249,12 @@ export default {
             currentComponent,
             handleAddRewardType,
             handleDelete,
-            updateRewardType,
+            rewardDetail,
             handleUpdate,
             showReatimeData
         };
     },
 }
+
+
 </script>

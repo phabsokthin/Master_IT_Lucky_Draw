@@ -9,7 +9,7 @@ import clientRouter from './routes/router.js';
 import { browserLocalPersistence, setPersistence } from 'firebase/auth';
 import { projectAuth } from './config/config';
 import { MotionPlugin } from '@vueuse/motion'
-
+import vue3lottie from 'vue3-lottie';
 const path = window.location.pathname.split('/')[1]; // Get the first part of the path
 
 let routes;
@@ -20,7 +20,7 @@ if (path === 'admin') {
 }
 
 setPersistence(projectAuth, browserLocalPersistence).then(() => {
-    createApp(App).use(routes).use(MotionPlugin).use(ElementPlus).mount('#app');
+    createApp(App).use(routes).use(vue3lottie).use(MotionPlugin).use(ElementPlus).mount('#app');
 })
 .catch(err => {
     console.log(err)
