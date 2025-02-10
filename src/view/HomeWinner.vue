@@ -180,7 +180,7 @@
 
     <div class="relative">
         <div class="fixed bottom-4 right-20">
-            <button @click="clearCurrentStudentFromLocalStorage"
+            <button @click="handleClearLocalStorage"
                 class="p-3 font-bold text-red-500 bg-white rounded-full shadow-lg hover:bg-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -436,13 +436,22 @@ export default {
 
         const clearCurrentStudentFromLocalStorage = () => {
 
+           
+                localStorage.removeItem('currentStudent');
+                localStorage.removeItem('studentIndex');
+                currentStudent.value = null;
+                studentIndex.value = 0;
+            
+        };
+
+        const handleClearLocalStorage = () => {
             if (window.confirm("តើអ្នកចង់ជម្រះទាំងអស់មែនទេ?")) {
                 localStorage.removeItem('currentStudent');
                 localStorage.removeItem('studentIndex');
                 currentStudent.value = null;
                 studentIndex.value = 0;
             }
-        };
+        }
 
         // Call these in onMounted
         onMounted(() => {
@@ -674,7 +683,8 @@ export default {
             congradFire,
             congratuatedBox,
             isOpenCongrate,
-            handleCloseCongrate
+            handleCloseCongrate,
+            handleClearLocalStorage
         };
     },
 };

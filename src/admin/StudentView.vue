@@ -48,7 +48,7 @@
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         ឈ្មោះសិស្ស
                                     </th>
-                                    
+
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         លេខទូរស័ព្ទ
@@ -57,7 +57,7 @@
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         អុីម៉ែល
                                     </th>
-                                    
+
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         អាស័យដ្ឋាន
@@ -73,12 +73,12 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr v-for="student in filteredStudents" :key="student.id">
+                                <tr v-for="student in data" :key="student.id">
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                         {{ student.studentName }}
                                     </td>
-                                   
+
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ student.phone }}
@@ -87,7 +87,7 @@
                                         class="px-6 py-4 text-sm font-medium text-gray-800 capitalize whitespace-nowrap dark:text-gray-200">
                                         {{ student.email }}
                                     </td>
-                                    
+
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ student.address }}
@@ -115,7 +115,7 @@
                         </table>
                     </div>
 
-                    
+
                     <!-- Pagination -->
                     <div class="px-4 py-1">
                         <nav class="flex items-center space-x-1">
@@ -142,12 +142,12 @@
                     </div>
 
                     <!-- <pre>{{ paginatedStudents }}</pre> -->
-                    
+
                 </div>
             </div>
         </div>
     </div>
-    
+
     <component :is="currentComponent" @close="currentComponent = ''" :updateRewardType="updateRewardType"
         :loadDataStudent="loadDataStudent" :rewardId="rewardId" :studentDoc="studentDoc" />
 </template>
@@ -155,11 +155,15 @@
 <script>
 
 
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import AddStudentRewardModal from '@/components/admin/AddStudentRewardModal.vue';
 import getCollection from '@/firebase/getCollection';
 import useCollection from '@/firebase/useCollection';
 import { handleMessageSuccess } from '@/message';
+import { useFirestorePagination } from '@/firebase/useFirestorePagination';
+import { onMounted } from 'vue';
+import { watch } from 'vue';
+import useCollectionSearch from '@/firebase/useCollectionSearch';
 
 export default {
     components: {
@@ -172,7 +176,6 @@ export default {
         const searchText = ref('');
 
         // Pagination state
-        const currentPage = ref(1);
         const itemsPerPage = ref(10);
 
         const rewardId = ref("");
@@ -181,20 +184,35 @@ export default {
         const { document: students } = getCollection("students");
         const { deleteDocs } = useCollection("students");
 
-        // Computed property to filter students based on search text
-        const filteredStudents = computed(() => {
-            if (!searchText.value) {
-                return students.value;
-            }
-            return students.value.filter(student => {
-                return (
-                    student.studentName.toLowerCase().includes(searchText.value.toLowerCase()) ||
-                    student.phone.toLowerCase().includes(searchText.value.toLowerCase()) ||
-                    student.email.toLowerCase().includes(searchText.value.toLowerCase()) ||
-                    student.address.toLowerCase().includes(searchText.value.toLowerCase())
-                );
-            });
+        const { data, currentPage, pageRange, totalPages, loadPreviousPage, loadNextPage, goToPage, fetchTotalPages, getDataRealTime } = useFirestorePagination('students', 10);
+
+        onMounted(() => {
+            fetchTotalPages();
+            getDataRealTime(currentPage.value);
         });
+
+        //  search text
+        watch(searchText, async (newVal) => {
+            if (newVal.trim()) {
+                currentPage.value = 1; // Reset current page to 1 on search
+                const { documents } = useCollectionSearch('students', newVal.trim().toLowerCase(), 'studentName');
+
+                watch(documents, (newDocs) => {
+                    if (newDocs) {
+                        data.value = newDocs.slice(0, 10); // Show first page of search results
+                        totalPages.value = Math.ceil(newDocs.length / 10); // Update totalPages
+                        pageRange.value = Array.from({ length: totalPages.value }, (_, i) => i + 1); // Update page range
+                    }
+                }, { immediate: true });
+
+            } else {
+                // Reset pagination when search is cleared
+                currentPage.value = 1;
+                fetchTotalPages();
+                getDataRealTime(currentPage.value);
+            }
+        });
+
 
         // Handle delete
         const handleDelete = async (studentId) => {
@@ -235,7 +253,16 @@ export default {
             studentDoc,
             students,
             handleDelete,
-            filteredStudents // Add the computed property to the return object
+
+            loadPreviousPage,
+            loadNextPage,
+            goToPage,
+            fetchTotalPages,
+            getDataRealTime,
+            totalPages,
+            data,
+            pageRange,
+
         };
     }
 };

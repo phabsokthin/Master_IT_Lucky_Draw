@@ -75,53 +75,54 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <template v-for="rewardType in paginatedRewardDocs" :key="rewardType.id">
-                                    <tr v-for="rewards in rewardType.rewards" :key="rewards.id">
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.studentName }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.courseName }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.phone }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.email }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.rewardDescription }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                            {{ rewards.createdAt ? new Date(rewards.createdAt.seconds *
-                                                1000).toLocaleDateString('en-US', {
-                                                    weekday: 'short',
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                }) : 'N/A' }}
-                                        </td>
-                                        <td>
-                                            <div class="flex justify-end pr-2 space-x-2">
-                                                <button @click="handleDelete(rewardType.id, rewards.id)"
-                                                    class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
-                                                <button @click="handleUpdate(rewardType.id, rewards)"
-                                                    class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </template>
+
+                                <tr v-for="rewards in paginatedRewards" :key="rewards.id">
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ rewards.studentName }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ rewards.courseName }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ rewards.phone }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+                                        {{ rewards.email }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                        {{ rewards.rewardDescription }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                        {{ rewards.createdAt ? new Date(rewards.createdAt.seconds *
+                                            1000).toLocaleDateString('en-US', {
+                                                weekday: 'short',
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                            }) : 'N/A' }}
+                                    </td>
+                                    <td>
+                                        <div class="flex justify-end pr-2 space-x-2">
+                                            <button @click="handleDelete(rewards.id, rewards.id)"
+                                                class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
+                                            <button @click="handleUpdate(rewards.id, rewards)"
+                                                class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
+                                        </div>
+                                    </td>
+                                </tr>
+
                             </tbody>
                         </table>
                     </div>
 
-              
+
+
                     <!-- Pagination -->
                     <div class="px-4 py-1">
                         <nav class="flex items-center space-x-1">
@@ -168,7 +169,7 @@ export default {
         AddRewardQtyModal
     },
     setup() {
-        const rewardDocs = ref([]);
+        const allRewards = ref([]); // Stores flattened rewards for pagination
         const { documents: rewardTypeDoc, fetchCollection } = useFirestoreCollection("rewardTypes");
 
         const currentComponent = ref('');
@@ -180,7 +181,7 @@ export default {
 
         // Pagination state
         const currentPage = ref(1);
-        const itemsPerPage = ref(2);
+        const itemsPerPage = ref(10);
 
         const rewardTypesId = ref("");
         const itemQty = ref("");
@@ -198,40 +199,36 @@ export default {
             rewardUnsubscribers.forEach((unsubscribe) => unsubscribe());
         });
 
-        // Fetch data real-time
+        // Fetch and flatten rewards
         const fetchReward = () => {
             const orderByField = 'rewardNo';
 
             try {
-                rewardTypeDoc.value.forEach((reward) => {
+                rewardTypeDoc.value.forEach((rewardType) => {
                     const { fetchSubcollection } = useSubcollection(
-                        'rewardTypes', reward.id, 'rewards', orderByField
+                        'rewardTypes', rewardType.id, 'rewards', orderByField
                     );
 
                     fetchSubcollection();
 
                     const unsubscribe = onSnapshot(
                         query(
-                            collection(projectFirestore, `rewardTypes/${reward.id}/rewards`),
+                            collection(projectFirestore, `rewardTypes/${rewardType.id}/rewards`),
                             orderBy("createdAt", "desc")
                         ),
                         (snapshot) => {
                             const updatedRewards = snapshot.docs.map((doc) => ({
                                 id: doc.id,
+                                rewardType: rewardType.rewardType, // Add reward type info
+                                rewardDescription: rewardType.rewardDescription,
                                 ...doc.data(),
                             }));
 
-                            const rewardIndex = rewardDocs.value.findIndex((r) => r.id === reward.id);
-                            if (rewardIndex !== -1) {
-                                rewardDocs.value[rewardIndex].rewards = updatedRewards;
-                            } else {
-                                rewardDocs.value.push({
-                                    id: reward.id,
-                                    rewardType: reward.rewardType,
-                                    rewardDescription: reward.rewardDescription,
-                                    rewards: updatedRewards,
-                                });
-                            }
+                            // Flatten all rewards for pagination
+                            allRewards.value = [
+                                ...allRewards.value.filter(r => r.rewardType !== rewardType.rewardType),
+                                ...updatedRewards
+                            ];
                         }
                     );
 
@@ -243,41 +240,27 @@ export default {
         };
 
         // Search logic
-        const filteredRewardDocs = computed(() => {
-    const lowerSearch = search.value.toLowerCase();
+        const filteredRewards = computed(() => {
+            if (!allRewards.value) return []; 
 
-    if (!lowerSearch) {
-        return rewardDocs.value; // Return all rewards if search is empty
-    }
+            const lowerSearch = search.value?.toLowerCase().trim(); // Ensure lowercase and trimmed
 
-    return rewardDocs.value.map((rewardDoc) => {
-        const filteredRewards = rewardDoc.rewards.filter((reward) => {
-            return (
-                reward.studentName?.toLowerCase().includes(lowerSearch) ||
-                reward.courseName?.toLowerCase().includes(lowerSearch) ||
-                reward.phone?.toLowerCase().includes(lowerSearch) ||
-                reward.email?.toLowerCase().includes(lowerSearch) ||
-                reward.rewardDescription?.toLowerCase().includes(lowerSearch)
-            );
+            if (!lowerSearch) return allRewards.value; // Return all rewards if search is empty
+
+            return allRewards.value.filter((reward) => {
+                return ['studentName', 'courseName', 'phone', 'email', 'rewardDescription']
+                    .some((key) => reward[key]?.toLowerCase().includes(lowerSearch)); 
+            });
         });
 
-        // Only return objects with matching rewards
-        return filteredRewards.length > 0
-            ? {
-                ...rewardDoc,
-                rewards: filteredRewards, // Keep only filtered rewards
-              }
-            : null;
-    }).filter(Boolean); // Remove null values
-});
 
         // Pagination logic
-        const totalPages = computed(() => Math.ceil(filteredRewardDocs.value.length / itemsPerPage.value));
+        const totalPages = computed(() => Math.ceil(filteredRewards.value.length / itemsPerPage.value));
 
-        const paginatedRewardDocs = computed(() => {
+        const paginatedRewards = computed(() => {
             const start = (currentPage.value - 1) * itemsPerPage.value;
             const end = start + itemsPerPage.value;
-            return filteredRewardDocs.value.slice(start, end);
+            return filteredRewards.value.slice(start, end);
         });
 
         const prevPage = () => {
@@ -293,7 +276,9 @@ export default {
         };
 
         const goToPage = (page) => {
-            currentPage.value = page;
+            if (page >= 1 && page <= totalPages.value) {
+                currentPage.value = page;
+            }
         };
 
         const handleAddReward = (component) => {
@@ -331,8 +316,7 @@ export default {
         };
 
         return {
-            rewardDocs,
-            paginatedRewardDocs,
+            paginatedRewards,
             currentPage,
             totalPages,
             prevPage,
@@ -348,7 +332,7 @@ export default {
             handleAddQtyModal,
             rewardTypesId,
             itemQty,
-            filteredRewardDocs
+            filteredRewards
         };
     },
 };

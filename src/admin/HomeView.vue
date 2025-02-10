@@ -74,8 +74,7 @@
 
                   
 
-                   
-
+                
                     <li class="block">
                         <RouterLink :to="{ name: 'reward' }"
                             class="flex items-center gap-3 px-4 py-2 font-thin rounded hover:bg-gray-200 '">
