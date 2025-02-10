@@ -108,6 +108,8 @@
                                     </td>
                                     <td>
                                         <div class="flex justify-end pr-2 space-x-2">
+                                            <button @click="handleAddQty(course)"
+                                                class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">បន្ថែម</button>
                                             <button @click="handleDelete(course.id)"
                                                 class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                             <button @click="handleUpdate(course)"
@@ -151,7 +153,7 @@
     </div>
 
     <component :is="currentComponent" @close="currentComponent = ''" :courseDetail="courseDetail"
-        :showReatimeData="showReatimeData" />
+        :showReatimeData="showReatimeData" :rewards="rewards" />
 </template>
 
 
@@ -165,17 +167,21 @@ import { ref } from 'vue';
 import AddCourseModal from '@/components/admin/AddCourseModal.vue';
 import {handleMessageSuccess } from '@/message';
 import useCollection from '@/firebase/useCollection';
+import AddRewardQtyModal from '@/components/admin/AddRewardQtyModal.vue';
 export default {
     components: {
-        AddCourseModal
+        AddCourseModal,
+        AddRewardQtyModal
     },
     setup() {
 
         const currentComponent = ref("")
         const searchText = ref("")
         const courseDetail = ref("")
+        const rewards = ref("")
         //for search resualt
         const searchResults = ref([]);
+        
 
         // const showReatimeData = ref("")
 
@@ -248,6 +254,12 @@ export default {
             }
         };
 
+
+        const handleAddQty = (reward) => {
+            currentComponent.value = 'AddRewardQtyModal';
+            rewards.value = reward
+        }
+
         return {
             data,
             currentPage,
@@ -262,7 +274,9 @@ export default {
             handleDelete,
             courseDetail,
             handleUpdate,
-            showReatimeData
+            showReatimeData,
+            handleAddQty,
+            rewards
         };
     },
 }

@@ -13,11 +13,11 @@
                 <form @submit.prevent="handleSubmit" class="">
                     <div class="my-4">
                         <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បន្ថែមចំនួនសំណាង <span
-                                class="text-green-600">{{ itemQty?.courseName }}</span>
+                                class="text-green-600">{{ rewards?.courseName }}</span>
                         </div>
                     </div>
                     <div class="w-full">
-
+                        <!-- <p>{{ rewards }}</p> -->
                         <div class="space-y-1">
                             <label for="" class="font-koulen">បន្ថែមចំនួន</label>
                             <input required v-model="qty" type="number" min="0" max="10"
@@ -62,71 +62,32 @@
 
 <script>
 import { ref } from 'vue';
-import { handleMessageSuccess, handleMessageError } from '@/message';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { projectFirestore } from '@/config/config';
+import { useUpdateCourseQty } from '@/firebase/useUpdateQty';
+
 export default {
-    props: ['rewardTypesId', 'itemQty'],
+    props: ["rewards"],
     setup(props, { emit }) {
-        const courseName = ref("");
-        const courseDescription = ref("");
-
-
-        const isLoading = ref(false);
-
+        const { updateCourseQty, isLoading } = useUpdateCourseQty();
+        const qty = ref(0);
         const btnEdit = ref(false);
 
-
-        const qty = ref(0); // Added a ref for quantity
-
         const handleSubmit = async () => {
-            isLoading.value = true;
-            try {
-                // **1️⃣ Get the existing reward document**
-                const rewardRef = doc(projectFirestore, "rewardTypes", props.rewardTypesId, "rewards", props.itemQty.id);
-                const rewardSnapshot = await getDoc(rewardRef);
-
-                if (!rewardSnapshot.exists()) {
-                    handleMessageError("រកមិនឃើញរង្វាន់!");
-                    return;
-                }
-                const currentQty = rewardSnapshot.data().qty || 0;
-
-                // **2️⃣ Update the reward quantity**
-                await updateDoc(rewardRef, {
-                    qty: currentQty + Number(qty.value) 
-                });
-
-                handleMessageSuccess("បានបន្ថែមចំនួនដោយជោគជ័យ!");
-
-                emit("close");
-
-            } catch (err) {
-                console.log(err);
-            } finally {
-                isLoading.value = false;
+            const success = await updateCourseQty(props.rewards.id, qty.value, "courses");
+            if (success) {
+                handleClose();
             }
         };
-
-
-
 
         const handleClose = () => {
             emit('close');
         };
 
-
-
         return {
             handleClose,
-            courseName,
-            courseDescription,
             handleSubmit,
             isLoading,
             qty,
-            btnEdit,
-
-
+            btnEdit
         };
     }
 };

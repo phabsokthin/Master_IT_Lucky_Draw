@@ -9,7 +9,6 @@
             <div
                 class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-[45%]">
 
-
                 <form @submit.prevent="handleSubmit" class="">
                     <div class="my-4">
                         <div class="text-lg font-medium leading-6 text-gray-900 font-koulen"> + បង្កើតរង្វាន់សំណាង
@@ -95,32 +94,28 @@
 </template>
 
 
+
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import useCollection from '@/firebase/useCollection';
-import { handleMessageSuccess } from '@/message';
 import getCollection from '@/firebase/getCollection';
 import { timestamp } from '@/config/config';
-import { onMounted } from 'vue';
-// import checkcourseNameExist from '@/firebase/checkcourseNameExist'
+import { handleMessageSuccess, handleMessageError } from '@/message';
 
 export default {
     props: ['courseDetail'],
     setup(props, { emit }) {
         const courseName = ref("");
         const courseDescription = ref("");
+        const courseNoReward = ref("");
+        const qty = ref(0);
+        const courseValue = ref("");
+        const btnEdit = ref(false);
+        const isLoading = ref(false);
         const selectedId = ref(null); // Track the ID of the reward type being edited
 
         const { addcDocs, updateDocs } = useCollection("courses");
-        const isLoading = ref(false);
-
-        const courseNoReward = ref("")
-        const qty = ref(0)
-        const courseValue = ref("")
-
         const { document: courseNamesDoc } = getCollection("courses");
-        const btnEdit = ref(false);
-
 
         onMounted(() => {
             if (props.courseDetail) {
@@ -131,40 +126,74 @@ export default {
                 courseDescription.value = props.courseDetail.courseDescription;
                 btnEdit.value = true;
             }
-        })
+        });
+
+        const checkDuplicateCourse = async (name, noReward, excludeCourseId = null) => {
+            const existingCourses = courseNamesDoc.value || [];
+
+            const normalizedName = String(name).toLowerCase().trim();
+            const normalizedNoReward = String(noReward).toLowerCase().trim();
+
+            return existingCourses.some(course => {
+                // Skip the course being edited
+                if (excludeCourseId && course.id === excludeCourseId) {
+                    return false;
+                }
+
+                return (
+                    String(course.courseName).toLowerCase().trim() === normalizedName ||
+                    String(course.courseNoReward).toLowerCase().trim() === normalizedNoReward
+                );
+            });
+        };
+
 
         const handleSubmit = async () => {
             isLoading.value = true;
             try {
-                const data = {
+                const courseData = {
                     courseNoReward: courseNoReward.value,
-                    courseName: courseName.value.toLocaleLowerCase().trim(),
+                    courseName: courseName.value.toLowerCase().trim(),
                     qty: qty.value,
                     courseValue: courseValue.value,
                     courseDescription: courseDescription.value,
-                    createdAt: timestamp()
+                    createdAt: timestamp(),
                 };
 
+                // If it's an update, check if the course is duplicated excluding the current course being edited
+                const isDuplicate = await checkDuplicateCourse(courseData.courseName, courseData.courseNoReward, props.courseDetail?.id);
+
+                // If the course is a duplicate and it's NOT in edit mode, show error
+
+
                 if (btnEdit.value) {
-
-                    await updateDocs(props.courseDetail.id, data);
+                    if (isDuplicate) {
+                        handleMessageError("លេខរង្វាន់និងរង្វាន់សំណាងមានម្តងហើយ​!");
+                        return;
+                    }
+                    // If editing an existing course, perform the update
+                    await updateDocs(props.courseDetail.id, courseData);
                     handleMessageSuccess("បានកែប្រែដោយជោគជ័យ!");
-
                 } else {
 
-                    await addcDocs(data);
+                    if (isDuplicate) {
+                        handleMessageError("លេខរង្វាន់និងរង្វាន់សំណាងមានម្តងហើយ​!");
+                        return;
+                    }
+                    // If adding a new course, perform the add operation
+                    await addcDocs(courseData);
                     handleMessageSuccess("បានបង្កើតវគ្គសិក្សាដោយជោគជ័យ!");
                 }
-                emit('close')
 
+                emit('close');
                 handleReset();
             } catch (err) {
-                console.log(err);
+                console.error("Error saving course:", err);
+                handleMessageError("មានបញ្ហាក្នុងការរក្សាទុកវគ្គសិក្សា!");
             } finally {
                 isLoading.value = false;
             }
         };
-
 
 
 
@@ -175,10 +204,12 @@ export default {
         const handleReset = () => {
             courseName.value = "";
             courseDescription.value = "";
+            courseNoReward.value = "";
+            qty.value = 0;
+            courseValue.value = "";
             btnEdit.value = false;
-            selectedId.value = null; // Clear the selected ID
+            selectedId.value = null;
         };
-
 
         return {
             handleClose,
@@ -187,13 +218,11 @@ export default {
             handleSubmit,
             isLoading,
             courseNamesDoc,
-
             btnEdit,
             handleReset,
             courseNoReward,
             qty,
             courseValue
-
         };
     }
 };

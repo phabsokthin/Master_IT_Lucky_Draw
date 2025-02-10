@@ -36,7 +36,7 @@
                         <div class="space-x-2">
                             <button class="btn_add" @click="handleAddReward('AddRewardTypeModal')">+
                                 បន្ថែមរង្វាន់</button>
-                            <button class="btn_add" @click="handleAddReward('AddRewardModal')">+ បង្កើតថ្មី</button>
+                            <button class="btn_add" @click="handleAddReward('AddRewardModal')">+ បង្កើតរង្វាន់ថ្ងៃនេះ</button>
                         </div>
                     </div>
                     <!-- Table -->

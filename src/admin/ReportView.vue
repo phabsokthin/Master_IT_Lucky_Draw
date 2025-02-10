@@ -117,7 +117,7 @@
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         ឈ្មោះសិស្ស
                                     </th>
-                                 
+
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         លេខទូរស័ព្ទ
@@ -126,7 +126,7 @@
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         អុីម៉ែល
                                     </th>
-                                    
+
                                     <th scope="col"
                                         class="px-6 py-3 text-sm font-medium text-gray-500 uppercase text-start font-koulen">
                                         កាលបរិច្ឆេត
@@ -142,7 +142,7 @@
                                 <!-- Render rewards dynamically -->
 
                                 <tr v-for="re in rewards" :key="re">
-                                   
+
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
                                         {{ re.courseName }}
@@ -151,8 +151,8 @@
                                         class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
                                         {{ re.studentName }}
                                     </td>
-                                   
-                                  
+
+
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
                                         {{ re.phone }}
@@ -161,7 +161,7 @@
                                         class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-gray-400">
                                         {{ re.email }}
                                     </td>
-                                    
+
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ re.createdAt ? new Date(re.createdAt.seconds *
@@ -186,7 +186,8 @@
 
                     <!-- Display Total Students -->
                     <div class="px-4 py-3">
-                        <p class="font-koulen">សរុបសិស្ស: <span class="text-red-500">{{ rewards.length }}</span> នាក់</p>
+                        <p class="font-koulen">សរុបសិស្ស: <span class="text-red-500">{{ rewards.length }}</span> នាក់
+                        </p>
                     </div>
                 </div>
             </div>
@@ -197,13 +198,15 @@
 </template>
 
 <script>
-import { projectFirestore } from '@/config/config';
-import { handleMessageError } from '@/message';
-import { collection, query, where, getDocs, orderBy, doc, Timestamp } from 'firebase/firestore';
+
 import { computed } from 'vue';
-import { onMounted } from 'vue';
 import ViewStudentRewardDetailsModal from '@/components/admin/ViewStudentRewardDetailModal.vue';
 import { ref } from 'vue';
+
+import getCollection from '@/firebase/getCollection';
+
+import { useFetchRewards } from '@/firebase/useFetchFilterDate'
+import { watchEffect } from 'vue';
 
 export default {
     components: {
@@ -213,77 +216,40 @@ export default {
         const rewardTypeId = ref("");
         const startDate = ref("");
         const endDate = ref("");
-        const rewardTypes = ref([]);
-        const rewards = ref([]);
+        // const rewardTypes = ref([]);
+        // const rewards = ref([]);
 
         const currentComponent = ref("")
 
         const rewardDoc = ref("")
         const studentDoc = ref("")
 
-        // Fetch the reward types from Firestore
-        const getRewardTypes = async () => {
-            const rewardTypesCollection = collection(projectFirestore, "rewardTypes");
-            const rewardTypesSnapshot = await getDocs(rewardTypesCollection);
-            rewardTypes.value = rewardTypesSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-        };
+        const { document: rewardTypes } = getCollection("rewardTypes")
 
-        const fetchRewards = async () => {
-            try {
-                if (!rewardTypeId.value) return;
+        const { rewards, fetchRewards } = useFetchRewards();
 
-                const rewardTypeDocRef = doc(projectFirestore, "rewardTypes", rewardTypeId.value);
-                const rewardsSubcollection = collection(rewardTypeDocRef, "rewards");
+        //real-time
 
-                let rewardsQuery = query(rewardsSubcollection, orderBy("createdAt", "desc"));
+        // watchEffect(() => {
+        //     if (rewardTypeId.value) {
+        //         fetchRewards(rewardTypeId.value,"rewardTypes", startDate.value, endDate.value, "rewards");
+        //     }
 
-                if (startDate.value && endDate.value) {
-                    const start = Timestamp.fromDate(new Date(startDate.value));
-                    const end = Timestamp.fromDate(new Date(endDate.value + "T23:59:59"));
-
-                    rewardsQuery = query(
-                        rewardsQuery,
-                        where("createdAt", ">=", start),
-                        where("createdAt", "<=", end)
-                    );
-                }
-
-                const rewardsSnapshot = await getDocs(rewardsQuery);
-
-                if (rewardsSnapshot.empty) {
-                    handleMessageError(`មិនមានទិន្ន័យសិស្សចន្លោះ ${startDate.value} ដល់ ${endDate.value}ទេ។ ព្យាយាមម្តងទៀត`);
-                    rewards.value = [];
-                } else {
-                    rewards.value = rewardsSnapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }));
-                }
-            } catch (error) {
-                console.error("Error fetching rewards:", error);
-                handleMessageError("កំហុសក្នុងការទាញយកទិន្ន័យ។ សូមព្យាយាមម្តងទៀត។");
-            }
-        };
-
-        // Call this function when the component is mounted
-        onMounted(() => {
-            getRewardTypes();
-
-        });
 
         // Handle the date filter click
         const handleFilterDate = () => {
-            fetchRewards();
+            watchEffect(() => {
+                if (rewardTypeId.value) {
+                    fetchRewards(rewardTypeId.value, "rewardTypes", startDate.value, endDate.value, "rewards");
+                }
+            });
         };
 
         // Computed property to calculate the total number of students
         const totalStudents = computed(() => {
             return rewards.value.reduce((total, reward) => {
                 const validStudents = reward.students
-                    ? reward.students.filter(student => student.studentName) // Count only students with a name
+                    ? reward.students.filter(student => student.studentName)
                     : [];
                 return total + validStudents.length;
             }, 0);
