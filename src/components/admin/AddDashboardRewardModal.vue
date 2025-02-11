@@ -19,7 +19,7 @@
 
                         <div class="space-y-1">
                             <label for="" class="font-koulen">ចំនួនសំណាង: *</label>
-                            <input required v-model="qtyLucky" type="text"
+                            <input required v-model="qty" type="number"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-sm"
                                 placeholder="លេខរង្វាន់">
                         </div>
@@ -88,14 +88,14 @@ export default {
     props: ['rewardDetail'],
     setup(props, { emit }) {
         const courseName = ref("");
-       const qtyLucky = ref("");
+       const qty = ref(0);
        const scores = ref("");
 
         const { addcDocs, updateDocs } = useCollection("rewardDashboard");
         const isLoading = ref(false);
 
         const courseNoReward = ref("")
-        const qty = ref(0)
+  
         const courseValue = ref("")
 
         const btnEdit = ref(false);
@@ -103,7 +103,7 @@ export default {
 
         onMounted(() => {
             if (props.rewardDetail) {
-                qtyLucky.value = props.rewardDetail.qtyLucky;
+                qty.value = props.rewardDetail.qty;
                 scores.value = props.rewardDetail.scores;
                 btnEdit.value = true;
             }
@@ -113,7 +113,7 @@ export default {
             isLoading.value = true;
             try {
                 const data = {
-                    qtyLucky: qtyLucky.value,
+                    qty: qty.value,
                     scores: scores.value,
                     createdAt: timestamp()
                 };
@@ -145,7 +145,7 @@ export default {
         };
 
         const handleReset = () => {
-            qtyLucky.value = "";
+            qty.value = "";
             scores.value = "";
             btnEdit.value = false;
         };
@@ -156,13 +156,12 @@ export default {
             courseName,
             handleSubmit,
             isLoading,
-            qtyLucky,
+            qty,
             scores,
 
             btnEdit,
             handleReset,
             courseNoReward,
-            qty,
             courseValue
 
         };

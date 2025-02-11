@@ -18,12 +18,7 @@
 
                     <div class="w-full">
 
-                        <!-- <div class="space-y-1">
-                            <label for="" class="font-koulen">លេខរង្វាន់: *</label>
-                            <input required v-model="rewardNo" min="0" type="number"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
-                                placeholder="លេខរង្វាន់">
-                        </div> -->
+
 
                         <div class="mt-2 space-y-1">
                             <label for="" class="font-koulen">ប្រភេទរង្វាន់: *</label>
@@ -36,9 +31,22 @@
                             </select>
                         </div>
 
-                        <div class="mt-2 space-y-1">
+
+                        <div class="my-3">
+                            <label for="" class="font-koulen">ពិន្ទុសំណាង:</label>
+                            <Switch v-model="enabled" :class="enabled ? 'bg-blue-600' : 'bg-gray-200'"
+                            class="relative inline-flex items-center h-6 rounded-full w-11">
+                            <span class="sr-only">Enable notifications</span>
+                            <span :class="enabled ? 'translate-x-6' : 'translate-x-1'"
+                                class="inline-block w-4 h-4 transition transform bg-white rounded-full" />
+                        </Switch>
+                        </div>
+
+                      
+
+                        <div v-if="!enabled" class="mt-2 space-y-1">
                             <label for="" class="font-koulen">រង្វាន់សំណាង:*</label>
-                            <select v-model="courseName"
+                            <select required v-model="courseName"
                                 class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
                                 <option value="">--ជ្រើសរើស--</option>
                                 <option v-for="course in courseDoc" :key="course.id" :value="course.courseName">
@@ -47,11 +55,23 @@
                             </select>
                         </div>
 
+                        <div v-else class="mt-2 space-y-1">
+                            <label for="" class="font-koulen">ពិន្ទុ:*</label>
+                            <select required v-model="scores"
+                                class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
+                                <option value="">--ជ្រើសរើស--</option>
+                                <option v-for="scores in rewardDoc" :key="scores.id" :value="scores.scores">
+                                    {{ scores.scores }}
+                                </option>
+                            </select>
+                        </div>
+
+
 
 
                         <div class="mt-2 space-y-1">
                             <label for="" class="font-koulen">ឈ្មោះសិស្ស:*</label>
-                            <select v-model="studentName"
+                            <select required v-model="studentName"
                                 class="w-full px-3 py-2 capitalize border border-gray-300 rounded-md font-koulen placeholder:text-sm">
                                 <option value="">--ជ្រើសរើស--</option>
                                 <option v-for="student in studentDoc" :key="student.studentName"
@@ -117,23 +137,15 @@
                     </div>
                 </form>
 
+
+
             </div>
-
-            <div>{{ phone }}</div>
-
-
-            <p></p>
         </div>
-
 
         <!-- component -->
 
-
-
-
-
     </div>
-  
+
 </template>
 
 
@@ -146,17 +158,21 @@ import { projectFirestore, timestamp } from '@/config/config';
 import useDoument from '@/firebase/useDocument';
 import { onMounted } from 'vue';
 
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { where, doc, updateDoc, collection, query, getDocs } from 'firebase/firestore';
 // import { watch } from 'vue';
 import getCollectionQueryTearm from '@/firebase/getCollectionQueryTerm'
 import { watch } from 'vue';
-
+import { Switch } from '@headlessui/vue'
 export default {
-    props: ['rewardTypeId', 'itemData',],
+    components: {
+        Switch
+    },
+    props: ['rewardTypeId', 'itemData', 'handleHandleFixPaginate'],
     setup(props, { emit }) {
         const rewardNo = ref(0);
         const description = ref("");
         const rewardType = ref("");
+        const scores = ref("")
 
         const rewardValue = ref("");
         const qty = ref(1);
@@ -165,10 +181,13 @@ export default {
 
         const studentName = ref("")
         const studentItem = ref({})
+        const enabled = ref(false)
+
 
         const { document: rewardTypesDoc } = getCollection("rewardTypes");
         const { document: studentDoc } = getCollection("students");
         const { document: courseDoc } = getCollection("courses");
+        const { document: rewardDoc } = getCollection("rewardDashboard");
         const btnEdit = ref(false);
         const phone = ref("")
         const email = ref("")
@@ -185,7 +204,7 @@ export default {
                         const studentData = documents.value && documents.value[0]; // assuming documents is an array
                         if (studentData) {
                             studentItem.value = studentData;
-                            phone.value = studentData.phone || ''; 
+                            phone.value = studentData.phone || '';
                             email.value = studentData.email || '';
                             console.log('Student items:', studentItem.value);
                         }
@@ -199,19 +218,21 @@ export default {
 
 
         onMounted(() => {
-            if (props.itemData) {
-                
-                studentName.value = props.itemData.studentName;
-                phone.value = props.itemData.phone;
-                email.value = props.itemData.email;
-                description.value = props.itemData.rewardDescription;
-                rewardType.value = props.itemData.rewardType;
-             
-                courseName.value = props.itemData.courseName
+            if (props.rewardTypeId) {
+
+                studentName.value = props.rewardTypeId.studentName;
+                phone.value = props.rewardTypeId.phone;
+                email.value = props.rewardTypeId.email;
+                description.value = props.rewardTypeId.rewardDescription;
+                rewardType.value = props.rewardTypeId.rewardType;
+
+                courseName.value = props.rewardTypeId.courseName
                 btnEdit.value = true;
             }
 
         })
+
+
 
 
 
@@ -228,43 +249,64 @@ export default {
                     rewardType: rewardType.value,
                     courseName: courseName.value,
                     rewardDescription: description.value,
-                    
-                
                     createdAt: timestamp()
                 };
 
-                if (!props.itemData) {
-                    const rewardsRef = collection(projectFirestore, `rewardTypes/${rewardType.value}/rewards`);
-                    const q = query(rewardsRef, where("rewardNo", "==", rewardNo.value));
-                    const querySnapshot = await getDocs(q);
+                if (props.rewardTypeId) {
+                    const { updateDocs } = useDoument("rewardTypes", props.rewardTypeId.rewardType, "rewards");
+                    await updateDocs(props.rewardTypeId.id, data);
+                    handleMessageSuccess("បានកែប្រែរង្វាន់ដោយជោគជ័យ!");
+                    props.handleHandleFixPaginate();
+                    window.location.reload();
+                    handleClose();
 
-                    if (!querySnapshot.empty) {
-                        handleMessageError(`លេខសម្គាល់រង្វាន់ ${rewardNo.value} មានរួចហើយ!`);
-                        isLoading.value = false;
-                        return;
-                    }
-                    else {
-                        await addDocs(data);
-                        handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
-                    }
 
 
                 } else {
-                    // Update existing document
-                    const { updateDocs } = useDoument("rewardTypes", props.rewardTypeId, "rewards");
-                    await updateDocs(props.itemData.id, data);
-                    handleMessageSuccess("បានកែប្រែរង្វាន់ដោយជោគជ័យ!");
+                    // **Update existing reward**
+
+
+
+                    // handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
+                    // **Find the course document by courseName**
+                    const coursesRef = collection(projectFirestore, "courses");
+                    const courseQuery = query(coursesRef, where("courseName", "==", courseName.value));
+                    const courseQuerySnapshot = await getDocs(courseQuery);
+
+                    if (!courseQuerySnapshot.empty) {
+                        const courseDoc = courseQuerySnapshot.docs[0]; // Get the first matching document
+                        const courseRef = doc(projectFirestore, "courses", courseDoc.id); // Reference the document by its ID
+                        const currentQty = courseDoc.data().qty;
+
+                        if (currentQty > 0) {
+                            // **Decrease the course qty by 1**
+                            await updateDoc(courseRef, { qty: currentQty - 1 });
+                            await addDocs(data);
+                            // handleMessageSuccess("បានកែប្រែចំនួនវគ្គសិក្សាដោយជោគជ័យ!");
+                            handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
+                            window.location.reload();
+                            emit("close");
+                        } else {
+                            handleMessageError(`អស់រង្វាន់${courseName.value}ហើយ!`);
+                        }
+                    } else {
+                        handleMessageError("រកមិនឃើញវគ្គសិក្សាទេ!");
+                    }
+
+                    props.handleHandleFixPaginate();
+
                 }
 
-                handleClose();
-                // handleReset();
+
             } catch (err) {
                 console.error("Error submitting data:", err);
+                handleMessageError("មានបញ្ហាក្នុងការបង្កើតរង្វាន់!");
             } finally {
                 isLoading.value = false;
             }
-        };
 
+
+        };
 
 
 
@@ -301,7 +343,10 @@ export default {
             phone,
             studentName,
             studentItem,
-            email
+            email,
+            rewardDoc,
+            scores,
+            enabled
 
 
         };

@@ -36,7 +36,8 @@
                         <div class="space-x-2">
                             <button class="btn_add" @click="handleAddReward('AddRewardTypeModal')">+
                                 បន្ថែមរង្វាន់</button>
-                            <button class="btn_add" @click="handleAddReward('AddRewardModal')">+ បង្កើតរង្វាន់ថ្ងៃនេះ</button>
+                            <button class="btn_add" @click="handleAddReward('AddRewardModal')">+
+                                បង្កើតរង្វាន់ថ្ងៃនេះ</button>
                         </div>
                     </div>
                     <!-- Table -->
@@ -109,9 +110,9 @@
                                     </td>
                                     <td>
                                         <div class="flex justify-end pr-2 space-x-2">
-                                            <button @click="handleDelete(rewards.id, rewards.id)"
+                                            <button @click="handleDelete(rewards.rewardType, rewards.id)"
                                                 class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
-                                            <button @click="handleUpdate(rewards.id, rewards)"
+                                            <button @click="handleUpdate(rewards)"
                                                 class="px-2 py-1.5 text-xs text-white bg-blue-500 rounded-full font-koulen hover:bg-blue-600">កែប្រែ</button>
                                         </div>
                                     </td>
@@ -148,13 +149,13 @@
     </div>
 
     <component :is="currentComponent" @close="currentComponent = ''" :rewardTypeId="rewardTypeId" :itemData="itemData"
-        :rewardTypesId="rewardTypesId" :itemQty="itemQty" />
+        :rewardTypesId="rewardTypesId" :itemQty="itemQty" :handleHandleFixPaginate="handleHandleFixPaginate" />
 </template>
 
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useFirestoreCollection, useSubcollection } from '@/firebase/getSubcollection';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { projectFirestore } from '@/config/config';
 import AddRewardModal from '@/components/admin/AddRewardModal.vue';
 import AddRewardTypeModal from '@/components/admin/AddRewardTypeModal.vue';
@@ -200,10 +201,11 @@ export default {
         });
 
         // Fetch and flatten rewards
-        const fetchReward = () => {
-            const orderByField = 'rewardNo';
-
+        const fetchReward = async () => {
             try {
+                const orderByField = 'rewardNo';
+                allRewards.value = []; // Clear the existing rewards list to prevent duplicates
+
                 rewardTypeDoc.value.forEach((rewardType) => {
                     const { fetchSubcollection } = useSubcollection(
                         'rewardTypes', rewardType.id, 'rewards', orderByField
@@ -219,16 +221,18 @@ export default {
                         (snapshot) => {
                             const updatedRewards = snapshot.docs.map((doc) => ({
                                 id: doc.id,
-                                rewardType: rewardType.rewardType, // Add reward type info
+                                rewardType: rewardType.rewardType,
                                 rewardDescription: rewardType.rewardDescription,
                                 ...doc.data(),
                             }));
 
-                            // Flatten all rewards for pagination
+                            // Clear existing rewards of this type before adding updated data
                             allRewards.value = [
                                 ...allRewards.value.filter(r => r.rewardType !== rewardType.rewardType),
                                 ...updatedRewards
                             ];
+
+                            updatePagination(); // Fix pagination after updates
                         }
                     );
 
@@ -239,9 +243,20 @@ export default {
             }
         };
 
+        const updatePagination = () => {
+            const totalItems = filteredRewards.value.length;
+            const maxPages = Math.ceil(totalItems / itemsPerPage.value);
+
+            if (currentPage.value > maxPages) {
+                currentPage.value = maxPages || 1; // Prevent out-of-range page numbers
+            }
+        };
+
+
+
         // Search logic
         const filteredRewards = computed(() => {
-            if (!allRewards.value) return []; 
+            if (!allRewards.value) return [];
 
             const lowerSearch = search.value?.toLowerCase().trim(); // Ensure lowercase and trimmed
 
@@ -249,7 +264,7 @@ export default {
 
             return allRewards.value.filter((reward) => {
                 return ['studentName', 'courseName', 'phone', 'email', 'rewardDescription']
-                    .some((key) => reward[key]?.toLowerCase().includes(lowerSearch)); 
+                    .some((key) => reward[key]?.toLowerCase().includes(lowerSearch));
             });
         });
 
@@ -281,26 +296,57 @@ export default {
             }
         };
 
-        const handleAddReward = (component) => {
+
+        //fix paginate
+        const handleHandleFixPaginate = async () => {
+            await fetchReward(); // Reload rewards
+            currentPage.value = 1;
+            updatePagination(); // Fix pagination
+        }
+
+        const handleAddReward = async (component) => {
+            rewardTypeId.value = null
             currentComponent.value = component;
-            itemData.value = null;
-            rewardTypeId.value = null;
+            // itemData.value = null;
+            // rewardTypeId.value = null;
+        
         };
 
-        const handleUpdate = (rewardType, item) => {
+
+        const handleUpdate = (rewardType) => {
             currentComponent.value = 'AddRewardModal';
             rewardTypeId.value = rewardType;
-            itemData.value = item;
+            // itemData.value = item;
         };
 
         // Handle delete
         const handleDelete = async (itemType, id) => {
             try {
                 const { deleteDocs } = useDocument('rewardTypes', itemType, 'rewards');
+
                 if (id) {
                     if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
+                        const rewardDoc = allRewards.value.find(reward => reward.id === id);
+
                         await deleteDocs(id);
                         handleMessageSuccess("បានលុបរង្វាន់ដោយជោគជ័យ");
+
+                        // Restore quantity logic
+                        if (rewardDoc && rewardDoc.courseName) {
+                            const courseRef = collection(projectFirestore, "courses");
+                            const courseQuery = query(courseRef, where("courseName", "==", rewardDoc.courseName));
+                            const courseSnapshot = await getDocs(courseQuery);
+
+                            if (!courseSnapshot.empty) {
+                                courseSnapshot.forEach(async (doc) => {
+                                    const currentQty = doc.data().qty;
+                                    await updateDoc(doc.ref, { qty: currentQty + 1 });
+                                });
+                            }
+                        }
+
+                        await fetchReward(); // Refresh data after delete
+                        updatePagination(); // Update pagination after deletion
                     }
                 }
             } catch (err) {
@@ -308,8 +354,11 @@ export default {
             }
         };
 
+
+
         // Add qty modal
         const handleAddQtyModal = (rewardTypeId, item) => {
+            
             currentComponent.value = 'AddRewardQtyModal';
             rewardTypesId.value = rewardTypeId;
             itemQty.value = item;
@@ -332,7 +381,8 @@ export default {
             handleAddQtyModal,
             rewardTypesId,
             itemQty,
-            filteredRewards
+            filteredRewards,
+            handleHandleFixPaginate
         };
     },
 };

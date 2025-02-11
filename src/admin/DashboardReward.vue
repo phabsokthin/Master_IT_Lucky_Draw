@@ -74,7 +74,7 @@
                                   
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                        {{ reward.qtyLucky }}
+                                        {{ reward.qty }}
                                     </td>
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-green-500 capitalize font-koulen whitespace-nowrap dark:text-gray-200">

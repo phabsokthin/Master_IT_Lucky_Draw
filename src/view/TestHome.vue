@@ -65,7 +65,6 @@
                     </div>
 
 
-
                     <div class="z-40">
                         <div class="h-full bg-white rounded-lg shadow-xl">
                             <div class="">
@@ -92,17 +91,9 @@
                                                         :style="reward.studentName.includes(' ') || reward.studentName.includes('\n') ? 'text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.4);' : ''">
                                                         <span v-html="formatName(reward.studentName)"></span>
                                                     </h2>
-
-                                                    <div
-                                                        class="p-2.5 z-40 text-white bg-orange-500 font-koulen shadow-lg rounded-md">
-                                                        ឈ្នះរង្វាន់🏅 {{ reward.courseName }}
-                                                    </div>
-
                                                 </div>
 
-
-
-                                                <div class="absolute -top-36 -left-14">
+                                                <div class="absolute -top-32 -left-28">
 
                                                     <Vue3Lottie :animationData="congratedAnimate" :height="300"
                                                         :width="300" />
@@ -124,14 +115,17 @@
                                     </div>
 
 
-                                    <!-- <div class="absolute bottom-7">
+                                    <div class="absolute bottom-7">
                                         <button v-if="!isLoading" @click="handleRandomFindRewardToday"
                                             class="shadow-xl bg-reward">
-                                            ឈ្នះរង្វាន់🏅៖ {{ student.courseName  }}
+                                            ឈ្នះសំណាងរៀនឥតគិតថ្លៃ
                                         </button>
-                                      
+                                        <button v-else disabled
+                                            class="p-2 px-4 text-lg text-orange-600 bg-yellow-300 rounded-full shadow-lg cursor-not-allowed font-koulen">
+                                            ឈ្នះសំណាងរៀនឥតគិតថ្លៃ.....
+                                        </button>
 
-                                    </div> -->
+                                    </div>
 
 
                                 </div>
@@ -150,12 +144,12 @@
                         <div
                             class="absolute w-[80%] mx-auto p-1 border border-red-500 -top-4 bg-white left-6 rounded-lg">
                             <div class="text-sm text-center text-red-500 font-koulen">
-                                <span :class="{ 'text-xl': reward.scores.includes(' ') }">{{ getFirstPart(reward.scores)
+                                <span :class="{ 'text-md': reward.scores.includes(' ') }">{{ getFirstPart(reward.scores)
                                     }}</span>
 
-                                <span v-if="reward.scores.includes(' ')" class="ml-1 text-md">{{
+                                <span v-if="reward.scores.includes(' ')" class="ml-1 text-xl">{{
                                     getSecondPart(reward.scores)
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
 
@@ -164,19 +158,13 @@
                             <!-- <h1 class="text-[30px] text-red-500 text-center font-koulen">{{ reward.qtyLucky }}</h1> -->
 
                             <div class="text-sm text-center text-red-500 font-koulen">
-                                <!-- <span :class="{ 'text-[30px]': reward.scores.includes(' ') }">{{
+                                <span :class="{ 'text-[30px]': reward.scores.includes(' ') }">{{
                                     getFirstPart(reward.qtyLucky)
-                                    }}សំណាង</span> -->
+                                }}</span>
 
-                                <span class="text-[30px]">{{
-                                    toKhmerNumber(reward?.qty)
-                                    }}
-                                    
-                                    <span class="text-[20px]">សំណាង</span></span>
-
-                                <!-- <span v-if="reward.scores?.includes('')" class="ml-1 text-lg">{{
-                                    getSecondPart(reward.qty)
-                                    }}</span> -->
+                                <span v-if="reward.scores.includes(' ')" class="ml-1 text-lg">{{
+                                    getSecondPart(reward.qtyLucky)
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -190,6 +178,26 @@
     </div>
 
 
+    <div class="relative">
+        <div class="fixed bottom-4 right-20">
+            <button @click="handleClearLocalStorage"
+                class="p-3 font-bold text-red-500 bg-white rounded-full shadow-lg hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-trash-2">
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    <line x1="10" x2="10" y1="11" y2="17" />
+                    <line x1="14" x2="14" y1="11" y2="17" />
+                </svg>
+            </button>
+            <div class="absolute right-0 cursor-pointer -top-2">
+
+            </div>
+        </div>
+
+    </div>
 
     <div class="fixed bottom-4 right-8">
         <button @click="handleCalandarComponent('CalandarComponent')"
@@ -212,45 +220,82 @@
     </div>
 
 
-
-    <div v-if="isOpenCongrate && currentStudent && currentStudent.length > 0"
-        class="fixed inset-0 z-50 overflow-y-auto">
+    <div v-if="isOpenCongrate" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity">
-                <div class="absolute inset-0 bg-gray-600 opacity-75 cursor-pointer" @click="handleCloseCongrate"></div>
+                <div class="absolute inset-0 bg-gray-600 opacity-75 cursor-pointer " @click="handleCloseCongrate"></div>
             </div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-            <div v-motion-pop-visible-once
-                class="inline-block px-4 pt-5 rounded-md pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-full sm:w-[90%] md:w-[40%] lg:w-[25%]">
-                <div class="relative w-full bg-white">
-                    <div v-if="currentStudent && currentStudent.length > 0">
-                        <div class="flex justify-center">
-                            <Vue3Lottie :animationData="congratuatedBox" :speed="1" :height="200" :width="400" />
-                        </div>
-                        <div v-for="(student, index) in currentStudent" :key="index">
-                            <div class="mb-4 space-y-2 text-center">
-                                <p class="text-2xl font-koulen">
-                                    សូមអបអរសាទរ🥳 <span class="text-orange-600">{{ student.studentName }}</span> 🥳
-                                </p>
-                                <p class="space-x-1 text-xl font-koulen">
-                                    <strong>លេខទូរស័ព្ទអ្នកឈ្នះ:</strong>
-                                    <span class="text-xl text-red-500">{{ student.phone }}</span>
-                                </p>
-                                <p class="space-x-1 text-xl font-koulen">
-                                    <strong>ឈ្នះរង្វាន់🏅:</strong>
-                                    <span class="text-xl text-red-500">{{ student.courseName }}</span>
-                                </p>
+            <div v-motion-pop-visible
+                class="inline-block px-4 pt-5 rounded-md pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-full md:w-[40%] lg:w-[25%]">
+                <div>
+
+
+                    <div class="relative w-full">
+                        <!-- <div class="">
+                            <Vue3Lottie :animationData="congrate" :height="400" :width="500" />
+                        </div> -->
+                        <div class="bg-white ">
+                            <!-- Show all winners in the modal -->
+                            <div v-if="currentStudent">
+                                <div v-if="currentStudent.length === 0">
+                                    <p>No students found for today.</p>
+                                </div>
+                                <div v-else>
+                                    <div class="flex justify-center">
+                                        <!-- <img class="object-contain w-[100px] "
+                                            src="@/assets/Animation - 1738583895418.gif" alt=""> -->
+
+
+                                    <Vue3Lottie :animationData="congratuatedBox" :speed="1" :height="200" :width="400" />
+
+                                    </div>
+
+
+                                    <!-- Loop through all students -->
+                                    <div v-for="(student, index) in currentStudent" :key="index">
+                                        <div class="mb-4 space-y-2 text-center ">
+                                            <p class="text-2xl font-koulen">សូមអបអរសាទរ🥳 <span
+                                                    class="text-orange-600">{{
+                                                        student.studentName }}</span> 🥳
+                                            </p>
+                                            <p class="space-x-1 text-xl font-koulen">
+                                                <strong>លេខទូរស័ព្ទអ្នកឈ្នះ:</strong>
+                                                <span class="text-xl text-red-500">{{ student.phone }} </span>
+                                            </p>
+                                            <p class="space-x-1 text-xl font-koulen"><strong>ឈ្នះរង្វាន់🏅:</strong>
+                                                <span class="text-xl text-red-500">{{ student.courseName }} </span>
+                                            </p>
+                                        </div>
+
+
+                                        
+
+                                    </div>
+                                </div>
+                                <div v-if="!isLoading" class="absolute -top-36 ">
+                                    <!-- <img src="@/assets/lottifile/animate_open_box.json" alt="Congratulations GIF"> -->
+
+                                    <!-- <Vue3Lottie :animationData="congradFire" :speed="1" :height="400" :width="400" /> -->
+
+                                </div>
                             </div>
+                            <!-- Display all students on the homepage -->
                         </div>
                     </div>
-                    <div v-else>
-                        <p>No students found for today.</p>
-                    </div>
+
+                    <!-- <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                        <span class="flex w-full mt-3 space-x-2 rounded-md shadow-sm sm:mt-0 sm:w-auto">
+                            <button type="button" @click="handleCloseCongrate"
+                                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm font-koulen hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
+                                បោះបង់
+                            </button>
+                        </span>
+                    </div> -->
                 </div>
             </div>
         </div>
     </div>
-
 
     <component :is="currentComponent" @close="currentComponent = ''" />
 
@@ -262,9 +307,10 @@
 
 <script>
 import { ref, onMounted, onUnmounted, watch } from "vue";
-import { collection, onSnapshot, query, where, Timestamp, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, query, where, Timestamp, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 import { projectFirestore } from "@/config/config";
 import getCollection from "@/firebase/getCollection";
+import { handleMessageError, handleMessageInfo } from "@/message";
 import congratedAnimate from '@/assets/lottifile/congrate2.json';
 import searchPeople from '@/assets/lottifile/search_people.json';
 import CalandarComponent from "@/components/admin/CalandarComponent.vue";
@@ -286,7 +332,6 @@ export default {
         const courseDocReward = ref([]);
         const todaysRewards = ref([]);
         let unsubscribe = null;
-        const lastDisplayedStudentId = ref(null);
 
         const today = new Date();
         const startOfDay = new Date(today.setHours(0, 0, 0, 0));
@@ -313,139 +358,219 @@ export default {
             }
         };
 
-
-        const fetchTodaysRewards = () => {
+        const fetchTodaysRewards = async () => {
             try {
                 const rewardTypesQuery = query(collection(projectFirestore, "rewardTypes"));
+                const rewardTypesSnapshot = await getDocs(rewardTypesQuery);
+                const allRewards = [];
 
-                // Set up a listener for reward types using onSnapshot
-                onSnapshot(rewardTypesQuery, (rewardTypesSnapshot) => {
-                    const allRewards = [];
-
-                    rewardTypesSnapshot.docs.forEach(async (rewardType) => {
-                        const rewardsQuery = query(
-                            collection(projectFirestore, "rewardTypes", rewardType.id, "rewards"),
-                            where("createdAt", ">=", startTimestamp),
-                            where("createdAt", "<=", endTimestamp),
-                            orderBy("createdAt", "desc") // Make sure the rewards are ordered
-                        );
-
-                        // Use onSnapshot for real-time updates for rewards
-                        onSnapshot(rewardsQuery, (rewardsSnapshot) => {
-                            rewardsSnapshot.docs.forEach(doc => {
-                                allRewards.push({
-                                    id: doc.id,
-                                    ...doc.data()
-                                });
-                            });
-
-                            // Update the `todaysRewards` when the data is updated
-                            todaysRewards.value = allRewards;
+                for (let rewardType of rewardTypesSnapshot.docs) {
+                    const rewardsQuery = query(
+                        collection(projectFirestore, "rewardTypes", rewardType.id, "rewards"),
+                        where("createdAt", ">=", startTimestamp),
+                        where("createdAt", "<=", endTimestamp)
+                    );
+                    const rewardsSnapshot = await getDocs(rewardsQuery);
+                    rewardsSnapshot.docs.forEach(doc => {
+                        allRewards.push({
+                            id: doc.id,
+                            ...doc.data()
                         });
                     });
-                });
+                }
+
+                todaysRewards.value = allRewards;
             } catch (error) {
                 console.error("Error fetching today's rewards: ", error);
             }
         };
 
 
-        watch(currentStudent, (newStudent) => {
-            if (newStudent && newStudent.length > 0) {
-                const studentId = newStudent[0].id;
 
-                // Only open the modal if the student is new
-                if (studentId !== lastDisplayedStudentId.value) {
-                    isOpenCongrate.value = true;
-                    lastDisplayedStudentId.value = studentId; // Update the last displayed student ID
+
+        const saveCurrentStudentToLocalStorage = () => {
+            if (currentStudent.value) {
+                const data = {
+                    student: currentStudent.value,
+                    date: new Date().toISOString().split('T')[0] // Store only YYYY-MM-DD
+                };
+                localStorage.setItem('currentStudent', JSON.stringify(data));
+            }
+        };
+
+        const saveStudentIndexToLocalStorage = () => {
+            const data = {
+                index: studentIndex.value,
+                date: new Date().toISOString().split('T')[0] // Store only YYYY-MM-DD
+            };
+            localStorage.setItem('studentIndex', JSON.stringify(data));
+        };
+
+        const loadCurrentStudentFromLocalStorage = () => {
+            const storedData = localStorage.getItem('currentStudent');
+            if (storedData) {
+                const { student, date } = JSON.parse(storedData);
+                const today = new Date().toISOString().split('T')[0];
+
+                if (date === today) {
+                    currentStudent.value = student;
+                } else {
+                    clearCurrentStudentFromLocalStorage(); // Clear old data
                 }
             }
+        };
+
+        const loadStudentIndexFromLocalStorage = () => {
+            const storedData = localStorage.getItem('studentIndex');
+            if (storedData) {
+                const { index, date } = JSON.parse(storedData);
+                const today = new Date().toISOString().split('T')[0];
+
+                if (date === today) {
+                    studentIndex.value = parseInt(index, 10);
+                } else {
+                    clearCurrentStudentFromLocalStorage(); // Clear old index
+                }
+            }
+        };
+
+        const clearCurrentStudentFromLocalStorage = () => {
+
+           
+                localStorage.removeItem('currentStudent');
+                localStorage.removeItem('studentIndex');
+                currentStudent.value = null;
+                studentIndex.value = 0;
+            
+        };
+
+        const handleClearLocalStorage = () => {
+            if (window.confirm("តើអ្នកចង់ជម្រះទាំងអស់មែនទេ?")) {
+                localStorage.removeItem('currentStudent');
+                localStorage.removeItem('studentIndex');
+                currentStudent.value = null;
+                studentIndex.value = 0;
+            }
+        }
+
+        // Call these in onMounted
+        onMounted(() => {
+            fetchCourse();
+            fetchTodaysRewards();
+            loadCurrentStudentFromLocalStorage();
+            loadStudentIndexFromLocalStorage();
         });
 
 
-        // Call these in onMounted
 
-        const loadStudentWindReward = () => {
+
+        const handleRandomFindRewardToday = async () => {
             isLoading.value = true;
 
-            // Fetch courses first
-            fetchCourse();
+            setTimeout(async () => {
+                try {
+                    if (todaysRewards.value.length === 0) {
+                        handleMessageError("សុំទោសមិនមានសិស្សឈ្នះរង្វាន់ថ្ងៃនេះទេ.");
+                        isLoading.value = false;
+                        return;
+                    }
 
-            // Set up a real-time listener for today's rewards
-            const rewardTypesQuery = query(collection(projectFirestore, "rewardTypes"));
+                    console.log("Today's rewards:", todaysRewards.value); // Debugging
 
-            // Use onSnapshot for real-time updates on reward types
-            onSnapshot(rewardTypesQuery, (rewardTypesSnapshot) => {
-                // Loop through all reward types
-                rewardTypesSnapshot.docs.forEach((rewardType) => {
-                    const rewardsQuery = query(
-                        collection(projectFirestore, "rewardTypes", rewardType.id, "rewards"),
-                        where("createdAt", ">=", startTimestamp),
-                        where("createdAt", "<=", endTimestamp),
-                        orderBy("createdAt", "desc")
-                    );
+                    let foundValidStudent = false;
 
-                    // Real-time listener for rewards collection under each reward type
-                    onSnapshot(rewardsQuery, (rewardsSnapshot) => {
-                        // Map rewards to an array
-                        const newRewards = rewardsSnapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data()
-                        }));
+                    while (studentIndex.value < todaysRewards.value.length) {
+                        const selectedReward = todaysRewards.value[studentIndex.value];
 
-                        // If rewards are found, update currentStudent with the first valid one
-                        if (newRewards.length > 0) {
-                            // Filter rewards to get valid ones (those with qty > 0)
-                            const validRewards = newRewards.filter(reward => reward.qty > 0);
+                        console.log("Checking student:", selectedReward);
 
-                            // If there are valid rewards, update currentStudent with the latest valid one
-                            if (validRewards.length > 0) {
-                                // Update currentStudent with the first valid reward from the filtered list
-                                currentStudent.value = [{ ...validRewards[0] }];
-                            }
+                        if (!selectedReward || !selectedReward.id || selectedReward.qty <= 0) {
+                            console.warn("Skipping student due to invalid data or out-of-stock:", selectedReward);
+                            studentIndex.value++;
+                            continue;
                         }
 
-                        // Hide loading once done processing
-                        isLoading.value = false;
-                    });
-                });
+                        const success = await decreaseCourseQty(selectedReward.courseName);
 
+                        if (success) {
+                            currentStudent.value = [{ ...selectedReward }];
+                            saveCurrentStudentToLocalStorage();
+                            studentIndex.value++;
+                            saveStudentIndexToLocalStorage();
+                            foundValidStudent = true;
 
-            });
+                            isOpenCongrate.value = true;
+                            break;
+                        } else {
+                            studentIndex.value++;
+                        }
+                    }
+
+                    if (!foundValidStudent) {
+                        handleMessageInfo("មិនមានសិស្សឈ្នះរង្វាន់ទៀតទេ!");
+                    }
+                } catch (error) {
+                    console.error("Error fetching rewards: ", error);
+                } finally {
+                    isLoading.value = false;
+                }
+            }, 5000); // 5-second delay
         };
 
 
-        // Watch for changes in currentStudent and update modal state
-        watch(() => currentStudent.value, (newValue) => {
-            // If there is new student data, close and reopen the modal
-            if (newValue && newValue.length > 0) {
-                // Close modal first
-                isOpenCongrate.value = false;
 
-                // After a small delay, reopen the modal to trigger reactivity
-                setTimeout(() => {
-                    isOpenCongrate.value = true;
-                }, 100); // 100ms delay (adjust as necessary)
+
+        const decreaseCourseQty = async (courseName) => {
+            if (!courseName) {
+                console.warn("Course name is missing. Skipping quantity update.");
+                return false;
             }
-        });
+
+            try {
+                const coursesQuery = query(collection(projectFirestore, "courses"), where("courseName", "==", courseName));
+                const coursesSnapshot = await getDocs(coursesQuery);
+
+                if (coursesSnapshot.empty) {
+                    console.warn(`Course '${courseName}' not found.`);
+                    return false;
+                }
+
+                const courseDoc = coursesSnapshot.docs[0];
+                const courseRef = doc(projectFirestore, "courses", courseDoc.id);
+                const currentQty = courseDoc.data().qty;
+
+                if (currentQty <= 0) {
+                    console.log(`Course '${courseName}' has no stock left.`);
+                    return false;
+                }
+
+                await updateDoc(courseRef, { qty: increment(-1) });
+                console.log(`Updated course '${courseName}': qty -1 (New qty: ${currentQty - 1})`);
+
+                return true; // Stock successfully updated
+
+            } catch (error) {
+                console.error("Error updating course quantity:", error);
+                return false;
+            }
+        };
 
 
 
 
         onMounted(() => {
-            loadStudentWindReward();
             fetchCourse();
             fetchTodaysRewards();
+            loadCurrentStudentFromLocalStorage();
+            loadStudentIndexFromLocalStorage();
             displayBackground();
         });
 
         onUnmounted(() => {
-            if (unsubscribe) {
-                unsubscribe();
-            }
+            if (unsubscribe) unsubscribe();
         });
 
-        watch(studentIndex); // Watch studentIndex changes
+        watch(studentIndex, saveStudentIndexToLocalStorage); // Watch studentIndex changes
 
 
 
@@ -526,6 +651,7 @@ export default {
             currentComponent.value = component
         }
 
+
         const handleCloseCongrate = () => {
             isOpenCongrate.value = false
         }
@@ -538,7 +664,8 @@ export default {
             studentIndex,
             courseDocReward,
             todaysRewards,
-            // handleRandomFindRewardToday,
+            handleRandomFindRewardToday,
+            clearCurrentStudentFromLocalStorage,
 
             emojis,
             getEmojiStyle,
@@ -557,7 +684,7 @@ export default {
             congratuatedBox,
             isOpenCongrate,
             handleCloseCongrate,
-
+            handleClearLocalStorage
         };
     },
 };
@@ -568,37 +695,6 @@ export default {
 
 <style scoped>
 /* Full-screen Finisher Header */
-
-/* Animation for modal "jump in" effect */
-@keyframes jump-in {
-    0% {
-        transform: translateY(100px);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-    transition: opacity 0.5s ease-in-out;
-}
-
-.modal-fade-enter {
-    opacity: 0;
-}
-
-.modal-fade-leave-to {
-    opacity: 0;
-}
-
-/* Apply jump-in effect when modal opens */
-.modal-slide-enter-active {
-    animation: jump-in 0.5s ease-out forwards;
-}
 
 
 .text {

@@ -16,14 +16,14 @@ import ViewStudentDetails from '@/admin/ViewStudentDetails.vue';
 import DashboardReward from '@/admin/DashboardReward.vue'
 
 
-const checkIfUserAlreadyLogin = (to, from, next) => {
-  const user = projectAuth.currentUser;
-  if (user) {
-    next({ name: 'admin' }); // Redirect logged-in users to /admin
-  } else {
-    next(); // Continue to the page
-  }
-};
+// const checkIfUserAlreadyLogin = (to, from, next) => {
+//   const user = projectAuth.currentUser;
+//   if (user) {
+//     next({ name: 'admin' }); // Redirect logged-in users to /admin
+//   } else {
+//     next(); // Continue to the page
+//   }
+// };
 
 // Guard to check if the user is authenticated before accessing admin routes
 const requiresAuth = (to, from, next) => {
@@ -40,7 +40,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomeWinner,
-   beforeEnter: checkIfUserAlreadyLogin, // Redirect logged-in users from the home page to /admin
+  //  beforeEnter: checkIfUserAlreadyLogin, // Redirect logged-in users from the home page to /admin
   },
   { path: '/about', name: 'About', component: AboutPage },
   {
