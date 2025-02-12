@@ -80,16 +80,16 @@
                         </div>
 
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">លេខទូរស័ព្ទ:</label>
+                            <!-- <label for="" class="font-koulen">លេខទូរស័ព្ទ:</label> -->
                             <input required v-model="phone" min="0" type="number"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
+                                class="hidden w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
                                 placeholder="លេខទូរស័ព្ទ" disabled>
                         </div>
 
                         <div class="mt-2 space-y-1">
-                            <label for="" class="font-koulen">អុីម៉ែល:</label>
+                            <!-- <label for="" class="font-koulen">អុីម៉ែល:</label> -->
                             <input required v-model="email" min="0" type="number"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
+                                class="hidden w-full px-3 py-2 border border-gray-300 rounded-md font-koulen placeholder:text-sm"
                                 placeholder="អុីម៉ែល" disabled>
                         </div>
 
@@ -150,11 +150,11 @@ import { ref } from 'vue';
 
 import getCollection from '@/firebase/getCollection';
 import { handleMessageSuccess, handleMessageError } from '@/message';
-import { projectFirestore, timestamp } from '@/config/config';
+import { projectFirestore } from '@/config/config';
 import useDoument from '@/firebase/useDocument';
 import { onMounted } from 'vue';
 
-import { where, doc, updateDoc, collection, query, getDocs } from 'firebase/firestore';
+import { where, doc, updateDoc, collection, query, getDocs, Timestamp } from 'firebase/firestore';
 // import { watch } from 'vue';
 import getCollectionQueryTearm from '@/firebase/getCollectionQueryTerm'
 import { watch } from 'vue';
@@ -190,13 +190,13 @@ export default {
         const email = ref("")
         // const { documents } =  getCollectionQueryTearm("students", where("studentName", "==", studentName.value));
 
-        watch(enabled, async () => {
-            if (enabled.value) {
-                courseName.value = "";
-                 scores.value = ""
+        watch(enabled, (newValue) => {
+            if (newValue) {
+                courseName.value = ""; // Clear course selection when switching to scores
+            } else {
+                scores.value = ""; // Clear scores selection when switching to courses
             }
-          
-        })
+        });
 
         watch(studentName, async () => {
             if (studentName.value) {
@@ -245,9 +245,10 @@ export default {
 
         const handleSubmit = async () => {
             isLoading.value = true;
+            const { addDocs } = useDoument("rewardTypes", rewardType.value, "rewards");
+
 
             try {
-                const { addDocs } = useDoument("rewardTypes", rewardType.value, "rewards");
 
                 const data = {
                     studentName: studentName.value,
@@ -259,15 +260,28 @@ export default {
                     rewardType: rewardType.value,
                     courseName: courseName.value,
                     rewardDescription: description.value,
-                    createdAt: timestamp()
+                    createdAt: Timestamp.now()
+                };
+
+                const datas = {
+                    studentName: studentName.value,
+                    phone: phone.value,
+                    email: email.value,
+                    qty: qty.value,
+                    scores: scores.value,
+                    enabled: enabled.value,
+                    rewardType: rewardType.value,
+                    courseName: courseName.value,
+                    rewardDescription: description.value,
+
                 };
 
                 // **Update existing reward if ID exists**
                 if (props.rewardTypeId?.id) {
                     const { updateDocs } = useDoument("rewardTypes", props.rewardTypeId.rewardType, "rewards");
-                    await updateDocs(props.rewardTypeId.id, data);
+                    await updateDocs(props.rewardTypeId.id, datas);
                     handleMessageSuccess("បានកែប្រែរង្វាន់ដោយជោគជ័យ!");
-                    await props.handleHandleFixPaginate();
+                    // await props.handleHandleFixPaginate();
 
                     handleClose();
                     return;
@@ -337,16 +351,19 @@ export default {
                     await updateDoc(scoresDashRef, { qty: currentScoresDashQty - 1 }); // Decrease score quantity
                 }
 
+
                 // **Create new reward**
                 await addDocs(data);
 
                 handleMessageSuccess("បានបង្កើតប្រភេទរង្វាន់ដោយជោគជ័យ!");
+                
+         
+                handleClose();
                 await props.handleHandleFixPaginate();
-                // emit("refreshData");
-                emit("close");
 
-                window.location.reload();
-
+              
+                // window.location.reload();
+ 
 
             } catch (err) {
                 console.error("Error submitting data:", err);

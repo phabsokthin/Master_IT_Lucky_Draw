@@ -145,7 +145,12 @@
 
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-green-500 font-koulen whitespace-nowrap dark:text-gray-400">
-                                        {{ re.courseName }}
+                                        <div v-if="re.courseName">
+                                            {{ re.courseName }}
+                                        </div>
+                                        <div v-else>
+                                            {{ re.scores }}
+                                        </div>
                                     </td>
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-900 capitalize font-koulen whitespace-nowrap dark:text-gray-400">
@@ -178,6 +183,10 @@
                                             class="p-2 text-xs text-white bg-green-500 rounded-full font-koulen hover:bg-green-600">
                                             មើល
                                         </button> -->
+
+                      
+                                            <button @click="handleDelete(re.rewardType, re.id)"
+                                                class="p-2 text-xs text-white bg-red-500 rounded-full font-koulen hover:bg-red-600">លុប</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -200,6 +209,7 @@
 <script>
 
 import { computed } from 'vue';
+import { collection, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import ViewStudentRewardDetailsModal from '@/components/admin/ViewStudentRewardDetailModal.vue';
 import { ref } from 'vue';
 
@@ -207,6 +217,9 @@ import getCollection from '@/firebase/getCollection';
 
 import { useFetchRewards } from '@/firebase/useFetchFilterDate'
 import { watchEffect } from 'vue';
+import useDocument from '@/firebase/useDocument';
+import { handleMessageError, handleMessageSuccess } from '@/message';
+import { projectFirestore } from '@/config/config';
 
 export default {
     components: {
@@ -272,6 +285,60 @@ export default {
             currentComponent.value = "ViewStudentRewardDetailsModal"
         };
 
+
+        const handleDelete = async (itemType, id) => {
+            try {
+                const { deleteDocs } = useDocument('rewardTypes', itemType, 'rewards');
+
+                if (id) {
+                    if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
+                        const rewardDoc = rewards.value.find(reward => reward.id === id);
+                        const scoreDoc = rewards.value.find(reward => reward.id === id);
+
+                        // Delete the reward document
+                        await deleteDocs(id);
+                        handleMessageSuccess("បានលុបរង្វាន់ដោយជោគជ័យ");
+                        handleFilterDate()
+
+                        // Restore quantity logic for the course
+                        if (rewardDoc && rewardDoc.courseName) {
+                            const courseRef = collection(projectFirestore, "courses");
+                            const courseQuery = query(courseRef, where("courseName", "==", rewardDoc.courseName));
+                            const courseSnapshot = await getDocs(courseQuery);
+
+                            if (!courseSnapshot.empty) {
+                                courseSnapshot.forEach(async (doc) => {
+                                    const currentQty = doc.data().qty || 0;  // Default to 0 if no qty exists
+                                    await updateDoc(doc.ref, { qty: currentQty + 1 });
+                                });
+                            }
+                        }
+
+                        // Restore quantity logic for the rewardDashboard (based on scores)
+                        if (scoreDoc && scoreDoc.scores) {
+                            const scoresRef = collection(projectFirestore, "rewardDashboard");
+                            const scoreQuery = query(scoresRef, where("scores", "==", scoreDoc.scores));  // Use scores to filter
+                            const scoresSnapshot = await getDocs(scoreQuery);
+
+                            if (!scoresSnapshot.empty) {
+                                scoresSnapshot.forEach(async (doc) => {
+                                    const currentQty = doc.data().qty || 0;  // Default to 0 if no qty exists
+                                    await updateDoc(doc.ref, { qty: currentQty + 1 });
+                                });
+                            }
+                        }
+
+                        
+
+                        // handleHandleFixPaginate();
+                    }
+                }
+            } catch (err) {
+                console.log(err);
+                handleMessageError("មានកំហុសពេលលុប!");
+            }
+        };
+
         return {
             rewardTypeId,
             startDate,
@@ -284,7 +351,8 @@ export default {
             handleCurrentViewDetails,
             currentComponent,
             rewardDoc,
-            studentDoc
+            studentDoc,
+            handleDelete
         };
     },
 };

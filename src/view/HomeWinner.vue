@@ -101,7 +101,7 @@
 
                                                         <div
                                                             class="p-2.5 z-40 text-white bg-orange-500 font-koulen shadow-lg rounded-md">
-                                                            ឈ្នះរង្វាន់🏅 {{ reward.courseName }}
+                                                            រង្វាន់🏅 {{ reward.courseName }}
                                                         </div>
                                                         <div class="absolute -top-36 -left-14">
 
@@ -407,6 +407,11 @@ export default {
                                 // Update currentStudent with the first valid reward from the filtered list
                                 currentStudent.value = [{ ...validRewards[0] }];
                             }
+                           
+                        }
+                        else{
+                            isOpenCongrate.value = false
+                            currentStudent.value = null
                         }
 
                         // Hide loading once done processing

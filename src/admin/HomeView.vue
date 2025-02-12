@@ -96,7 +96,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                             </svg>
-                            <span class="font-koulen">ផ្ទាំងបង្ហាញរង្វាន់</span>
+                            <span class="font-koulen">ពិន្ទុរង្វាន់</span>
                         </RouterLink>
                     </li>
 

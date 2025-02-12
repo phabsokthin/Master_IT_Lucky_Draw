@@ -209,17 +209,17 @@ export default {
         });
 
         // Fetch and flatten rewards
+
         const fetchReward = async () => {
             try {
-                const orderByField = 'rewardNo';
-                allRewards.value = []; // Clear the existing rewards list to prevent duplicates
+                allRewards.value = []; // Reset the rewards list
 
-                rewardTypeDoc.value.forEach((rewardType) => {
+                for (const rewardType of rewardTypeDoc.value) {
                     const { fetchSubcollection } = useSubcollection(
-                        'rewardTypes', rewardType.id, 'rewards', orderByField
+                        'rewardTypes', rewardType.id, 'rewards', 'rewardNo'
                     );
 
-                    fetchSubcollection();
+                    await fetchSubcollection();
 
                     const unsubscribe = onSnapshot(
                         query(
@@ -234,24 +234,24 @@ export default {
                                 ...doc.data(),
                             }));
 
-                            // Clear existing rewards of this type before adding updated data
+                            // Remove old rewards of this type before adding updated data
                             allRewards.value = [
                                 ...allRewards.value.filter(r => r.rewardType !== rewardType.rewardType),
                                 ...updatedRewards
                             ];
 
-                            // Reset current page to 1 when new data is added
-                            currentPage.value = 1;
-                            updatePagination(); // Fix pagination after updates
+                            // Force pagination update after fetching data
+                            updatePagination();
                         }
                     );
 
                     rewardUnsubscribers.push(unsubscribe);
-                });
+                }
             } catch (err) {
-                console.error('Error fetching reward types and rewards:', err);
+                console.error('Error fetching rewards:', err);
             }
         };
+
 
         // Update pagination logic
         const updatePagination = () => {
@@ -315,13 +315,14 @@ export default {
             currentComponent.value = component;
         };
 
+
         // Fix paginate
         const handleHandleFixPaginate = async () => {
-            await fetchReward(); // Reload rewards
-            // currentPage.value = 1;
-            await updatePagination(); 
-           
+            await fetchReward(); // Fetch new rewards
+            currentPage.value = 1; // Reset to first page
+            setTimeout(() => updatePagination(), 100); // Ensure pagination updates after state updates
         };
+
 
         const handleUpdate = (rewardType) => {
             currentComponent.value = 'AddRewardModal';
@@ -341,6 +342,7 @@ export default {
                         // Delete the reward document
                         await deleteDocs(id);
                         handleMessageSuccess("បានលុបរង្វាន់ដោយជោគជ័យ");
+                        await  handleHandleFixPaginate();
 
                         // Restore quantity logic for the course
                         if (rewardDoc && rewardDoc.courseName) {
@@ -370,7 +372,7 @@ export default {
                             }
                         }
 
-                        handleHandleFixPaginate();
+                      
                     }
                 }
             } catch (err) {
