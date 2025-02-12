@@ -7,7 +7,15 @@
 
         <div class="emoji-container">
             <span v-for="(emoji, index) in emojis" :key="index" class="emoji" :style="getEmojiStyle()">
-                {{ emoji }}
+                <!-- If the emoji is a URL or path, display it as an image -->
+                <div v-if="emoji.startsWith('https') || emoji.endsWith('.png') || emoji.endsWith('.jpg')">
+                    <img class="w-20" :src="emoji" alt="Emoji Image" />
+                </div>
+
+                <!-- If the emoji is not a URL or path, display it as a regular emoji -->
+                <div v-else>
+                    <span class="emoji-text">{{ emoji }}</span>
+                </div>
             </span>
         </div>
         <div class="md:w-[90%] lg:w-[90%] xl:w-[60%] h-full p-6 mx-auto md:-mt-28">
@@ -125,7 +133,7 @@
                                     </div>
 
 
-                                  
+
                                 </div>
 
 
@@ -159,15 +167,15 @@
                                 <!-- <span :class="{ 'text-[30px]': reward.scores.includes(' ') }">{{
                                     getFirstPart(reward.qtyLucky)
                                     }}សំណាង</span> -->
-<!--                                 
+                                <!--                                 
                                 <div v-if="reward.qty === 0">
                                     <span class="text-[20px]">អស់ហើយ</span>
                                 </div> -->
 
                                 <span class="text-[30px]">
                                     {{
-                                    toKhmerNumber(reward?.qty)
-                                }}
+                                        toKhmerNumber(reward?.qty)
+                                    }}
 
                                     <span class="text-[20px]">សំណាង</span></span>
 
@@ -275,6 +283,7 @@ import CalandarComponent from "@/components/admin/CalandarComponent.vue";
 import congrate from '@/assets/lottifile/congrate.json'
 import congradFire from '@/assets/lottifile/Animation - 1739105915769.json'
 import congratuatedBox from '@/assets/lottifile/Animation - 1739106738094.json'
+import logoMaster from "@/assets/logoMaster.png";
 
 export default {
     components: {
@@ -300,7 +309,7 @@ export default {
 
         const { document: rewardDash } = getCollection("rewardDashboard")
 
-        const emojis = ref(["🥳", "💖", "🥇", "🎁", "🎉", "✨", "😍", "🎓"]); // Customize emojis
+        const emojis = ref(["🥳", "💖",logoMaster, "🥇", "🎁",logoMaster, "🎉", "✨", "😍", "🎓", logoMaster]);
 
 
         const fetchCourse = () => {
@@ -407,9 +416,9 @@ export default {
                                 // Update currentStudent with the first valid reward from the filtered list
                                 currentStudent.value = [{ ...validRewards[0] }];
                             }
-                           
+
                         }
-                        else{
+                        else {
                             isOpenCongrate.value = false
                             currentStudent.value = null
                         }
