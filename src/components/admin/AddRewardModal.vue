@@ -106,11 +106,11 @@
                         <span v-if="!btnEdit" class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
                             <button v-if="!isLoading" type="submit"
                                 class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-600 border border-transparent rounded-md shadow-sm font-koulen hover:bg-green-500 focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
-                                រក្សាទុក
+                                + បង្ហាញរង្វាន់
                             </button>
                             <button v-else
-                                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-600 border border-transparent rounded-md shadow-sm font-koulen hover:bg-green-500 focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
-                                កំពុងរក្សាទុក...
+                                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-600 border border-transparent rounded-md shadow-sm cursor-not-allowed font-koulen focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
+                                កំពុងបង្ហាញរង្វាន់...
                             </button>
                         </span>
 
@@ -120,7 +120,7 @@
                                 កែប្រែ
                             </button>
                             <button v-else
-                                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-600 border border-transparent rounded-md shadow-sm font-koulen hover:bg-green-500 focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
+                                class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out border border-transparent rounded-md shadow-sm cursor-not-allowed font-koulen hover:bg-green-500 focus:outline-none focus:shadow-outline-green sm:text-sm sm:leading-5">
                                 កំពុងកែប្រែ...
                             </button>
                         </span>
