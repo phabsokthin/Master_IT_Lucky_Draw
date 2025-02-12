@@ -67,7 +67,7 @@
 
 
                     <div class="z-40">
-                        <div class="h-full bg-white rounded-lg shadow-xl">
+                        <div class="h-[350px] bg-white rounded-lg shadow-xl">
                             <div class="">
                                 <div class="text-center border-b border-red-500">
                                     <p class="w-full px-6 py-2 text-xl text-center text-orange-600 font-koulen">
@@ -76,7 +76,7 @@
                                 </div>
 
                                 <div class="relative flex flex-col items-center justify-center ">
-                                    <div class="w-[300px] p-7">
+                                    <div class="w-[300px]  p-7">
                                         <img class="" src="@/assets/opened-gift-box-surprise-png.webp"
                                             alt="Lucky Draw" />
                                     </div>
@@ -87,30 +87,31 @@
                                                 src="@/assets/Animation - 1738921236754.gif" alt="Loaded animation">
                                             <div v-else class="relative">
                                                 <div v-for="reward in currentStudent" :key="reward.id">
-                                                    <h2 v-motion-pop-visible
-                                                        class="mt-0 text-[32px] font-moul_regular  text text-center font-[400]"
-                                                        :style="reward.studentName.includes(' ') || reward.studentName.includes('\n') ? 'text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.4);' : ''">
-                                                        <span v-html="formatName(reward.studentName)"></span>
-                                                    </h2>
+                                                    <div v-if="reward.scores">
+                                                        <img class="w-16" src="@/assets/Animation - 1738921236754.gif"
+                                                            alt="Loaded animation">
 
-                                                    <div
-                                                        class="p-2.5 z-40 text-white bg-orange-500 font-koulen shadow-lg rounded-md">
-                                                        ឈ្នះរង្វាន់🏅 {{ reward.courseName }}
+                                                    </div>
+                                                    <div v-else-if="reward.courseName">
+                                                        <h2 v-motion-pop-visible
+                                                            class="mt-0 text-[32px] font-moul_regular  text text-center font-[400]"
+                                                            :style="reward.studentName.includes(' ') || reward.studentName.includes('\n') ? 'text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.4);' : ''">
+                                                            <span v-html="formatName(reward.studentName)"></span>
+                                                        </h2>
+
+                                                        <div
+                                                            class="p-2.5 z-40 text-white bg-orange-500 font-koulen shadow-lg rounded-md">
+                                                            ឈ្នះរង្វាន់🏅 {{ reward.courseName }}
+                                                        </div>
+                                                        <div class="absolute -top-36 -left-14">
+
+                                                            <Vue3Lottie :animationData="congratedAnimate" :height="300"
+                                                                :width="300" />
+
+                                                        </div>
                                                     </div>
 
                                                 </div>
-
-
-
-                                                <div class="absolute -top-36 -left-14">
-
-                                                    <Vue3Lottie :animationData="congratedAnimate" :height="300"
-                                                        :width="300" />
-
-                                                </div>
-
-
-
                                             </div>
                                         </div>
 
@@ -124,16 +125,7 @@
                                     </div>
 
 
-                                    <!-- <div class="absolute bottom-7">
-                                        <button v-if="!isLoading" @click="handleRandomFindRewardToday"
-                                            class="shadow-xl bg-reward">
-                                            ឈ្នះរង្វាន់🏅៖ {{ student.courseName  }}
-                                        </button>
-                                      
-
-                                    </div> -->
-
-
+                                  
                                 </div>
 
 
@@ -155,7 +147,7 @@
 
                                 <span v-if="reward.scores.includes(' ')" class="ml-1 text-md">{{
                                     getSecondPart(reward.scores)
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
 
@@ -167,11 +159,16 @@
                                 <!-- <span :class="{ 'text-[30px]': reward.scores.includes(' ') }">{{
                                     getFirstPart(reward.qtyLucky)
                                     }}សំណាង</span> -->
+<!--                                 
+                                <div v-if="reward.qty === 0">
+                                    <span class="text-[20px]">អស់ហើយ</span>
+                                </div> -->
 
-                                <span class="text-[30px]">{{
+                                <span class="text-[30px]">
+                                    {{
                                     toKhmerNumber(reward?.qty)
-                                    }}
-                                    
+                                }}
+
                                     <span class="text-[20px]">សំណាង</span></span>
 
                                 <!-- <span v-if="reward.scores?.includes('')" class="ml-1 text-lg">{{
@@ -212,39 +209,46 @@
     </div>
 
 
-
-    <div v-if="isOpenCongrate && currentStudent && currentStudent.length > 0"
-        class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity">
-                <div class="absolute inset-0 bg-gray-600 opacity-75 cursor-pointer" @click="handleCloseCongrate"></div>
-            </div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-            <div v-motion-pop-visible-once
-                class="inline-block px-4 pt-5 rounded-md pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-full sm:w-[90%] md:w-[40%] lg:w-[25%]">
-                <div class="relative w-full bg-white">
-                    <div v-if="currentStudent && currentStudent.length > 0">
-                        <div class="flex justify-center">
-                            <Vue3Lottie :animationData="congratuatedBox" :speed="1" :height="200" :width="400" />
-                        </div>
-                        <div v-for="(student, index) in currentStudent" :key="index">
-                            <div class="mb-4 space-y-2 text-center">
-                                <p class="text-2xl font-koulen">
-                                    សូមអបអរសាទរ🥳 <span class="text-orange-600">{{ student.studentName }}</span> 🥳
-                                </p>
-                                <p class="space-x-1 text-xl font-koulen">
-                                    <strong>លេខទូរស័ព្ទអ្នកឈ្នះ:</strong>
-                                    <span class="text-xl text-red-500">{{ student.phone }}</span>
-                                </p>
-                                <p class="space-x-1 text-xl font-koulen">
-                                    <strong>ឈ្នះរង្វាន់🏅:</strong>
-                                    <span class="text-xl text-red-500">{{ student.courseName }}</span>
-                                </p>
-                            </div>
+    <div v-for="reward in currentStudent" :key="reward.id">
+        <div v-if="!reward.scores">
+            <div v-if="isOpenCongrate && currentStudent && currentStudent.length > 0"
+                class="fixed inset-0 z-50 overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 transition-opacity">
+                        <div class="absolute inset-0 bg-gray-600 opacity-75 cursor-pointer"
+                            @click="handleCloseCongrate">
                         </div>
                     </div>
-                    <div v-else>
-                        <p>No students found for today.</p>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+                    <div v-motion-pop-visible-once
+                        class="inline-block px-4 pt-5 rounded-md pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl sm:my-8 sm:align-middle sm:p-6 w-full sm:w-[90%] md:w-[40%] lg:w-[25%]">
+                        <div class="relative w-full bg-white">
+                            <div v-if="currentStudent && currentStudent.length > 0">
+                                <div class="flex justify-center">
+                                    <Vue3Lottie :animationData="congratuatedBox" :speed="1" :height="200"
+                                        :width="400" />
+                                </div>
+                                <div v-for="(student, index) in currentStudent" :key="index">
+                                    <div class="mb-4 space-y-2 text-center">
+                                        <p class="text-2xl font-koulen">
+                                            សូមអបអរសាទរ🥳 <span class="text-orange-600">{{ student.studentName }}</span>
+                                            🥳
+                                        </p>
+                                        <p class="space-x-1 text-xl font-koulen">
+                                            <strong>លេខទូរស័ព្ទអ្នកឈ្នះ:</strong>
+                                            <span class="text-xl text-red-500">{{ student.phone }}</span>
+                                        </p>
+                                        <p class="space-x-1 text-xl font-koulen">
+                                            <strong>ឈ្នះរង្វាន់🏅:</strong>
+                                            <span class="text-xl text-red-500">{{ student.courseName }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <p>No students found for today.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

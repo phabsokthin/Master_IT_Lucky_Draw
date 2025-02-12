@@ -83,9 +83,16 @@
                                         {{ rewards.studentName }}
                                     </td>
                                     <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
-                                        {{ rewards.courseName }}
+                                        class="px-6 py-4 text-sm font-medium text-green-600 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
+
+                                        <div v-if="rewards.courseName">
+                                            {{ rewards.courseName }}
+                                        </div>
+                                        <div v-else>
+                                            {{ rewards.scores }}
+                                        </div>
                                     </td>
+
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-800 capitalize font-koulen whitespace-nowrap dark:text-gray-200">
                                         {{ rewards.phone }}
@@ -152,15 +159,16 @@
         :rewardTypesId="rewardTypesId" :itemQty="itemQty" :handleHandleFixPaginate="handleHandleFixPaginate" />
 </template>
 
+
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useFirestoreCollection, useSubcollection } from '@/firebase/getSubcollection';
 import { collection, getDocs, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { projectFirestore } from '@/config/config';
 import AddRewardModal from '@/components/admin/AddRewardModal.vue';
 import AddRewardTypeModal from '@/components/admin/AddRewardTypeModal.vue';
 import useDocument from '@/firebase/useDocument';
-import { handleMessageSuccess } from '@/message';
+import { handleMessageError, handleMessageSuccess } from '@/message';
 import AddRewardQtyModal from '@/components/admin/AddRewardQtyModal.vue';
 
 export default {
@@ -232,6 +240,8 @@ export default {
                                 ...updatedRewards
                             ];
 
+                            // Reset current page to 1 when new data is added
+                            currentPage.value = 1;
                             updatePagination(); // Fix pagination after updates
                         }
                     );
@@ -243,16 +253,16 @@ export default {
             }
         };
 
+        // Update pagination logic
         const updatePagination = () => {
             const totalItems = filteredRewards.value.length;
             const maxPages = Math.ceil(totalItems / itemsPerPage.value);
 
+            // Ensure currentPage is within valid range
             if (currentPage.value > maxPages) {
-                currentPage.value = maxPages || 1; // Prevent out-of-range page numbers
+                currentPage.value = maxPages || 1; // Reset to 1 if no items
             }
         };
-
-
 
         // Search logic
         const filteredRewards = computed(() => {
@@ -267,7 +277,6 @@ export default {
                     .some((key) => reward[key]?.toLowerCase().includes(lowerSearch));
             });
         });
-
 
         // Pagination logic
         const totalPages = computed(() => Math.ceil(filteredRewards.value.length / itemsPerPage.value));
@@ -296,27 +305,27 @@ export default {
             }
         };
 
-
-        //fix paginate
-        const handleHandleFixPaginate = async () => {
-            await fetchReward(); // Reload rewards
-            currentPage.value = 1;
-            updatePagination(); // Fix pagination
-        }
+        // Watch for changes in filteredRewards and update pagination
+        watch(filteredRewards, () => {
+            updatePagination();
+        });
 
         const handleAddReward = async (component) => {
-            rewardTypeId.value = null
+            rewardTypeId.value = null;
             currentComponent.value = component;
-            // itemData.value = null;
-            // rewardTypeId.value = null;
-        
         };
 
+        // Fix paginate
+        const handleHandleFixPaginate = async () => {
+            await fetchReward(); // Reload rewards
+            // currentPage.value = 1;
+            await updatePagination(); 
+           
+        };
 
         const handleUpdate = (rewardType) => {
             currentComponent.value = 'AddRewardModal';
             rewardTypeId.value = rewardType;
-            // itemData.value = item;
         };
 
         // Handle delete
@@ -327,11 +336,13 @@ export default {
                 if (id) {
                     if (window.confirm("តើអ្នកចង់លុបមែនទេ?")) {
                         const rewardDoc = allRewards.value.find(reward => reward.id === id);
+                        const scoreDoc = allRewards.value.find(reward => reward.id === id);
 
+                        // Delete the reward document
                         await deleteDocs(id);
                         handleMessageSuccess("បានលុបរង្វាន់ដោយជោគជ័យ");
 
-                        // Restore quantity logic
+                        // Restore quantity logic for the course
                         if (rewardDoc && rewardDoc.courseName) {
                             const courseRef = collection(projectFirestore, "courses");
                             const courseQuery = query(courseRef, where("courseName", "==", rewardDoc.courseName));
@@ -339,26 +350,37 @@ export default {
 
                             if (!courseSnapshot.empty) {
                                 courseSnapshot.forEach(async (doc) => {
-                                    const currentQty = doc.data().qty;
+                                    const currentQty = doc.data().qty || 0;  // Default to 0 if no qty exists
                                     await updateDoc(doc.ref, { qty: currentQty + 1 });
                                 });
                             }
                         }
 
-                        await fetchReward(); // Refresh data after delete
-                        updatePagination(); // Update pagination after deletion
+                        // Restore quantity logic for the rewardDashboard (based on scores)
+                        if (scoreDoc && scoreDoc.scores) {
+                            const scoresRef = collection(projectFirestore, "rewardDashboard");
+                            const scoreQuery = query(scoresRef, where("scores", "==", scoreDoc.scores));  // Use scores to filter
+                            const scoresSnapshot = await getDocs(scoreQuery);
+
+                            if (!scoresSnapshot.empty) {
+                                scoresSnapshot.forEach(async (doc) => {
+                                    const currentQty = doc.data().qty || 0;  // Default to 0 if no qty exists
+                                    await updateDoc(doc.ref, { qty: currentQty + 1 });
+                                });
+                            }
+                        }
+
+                        handleHandleFixPaginate();
                     }
                 }
             } catch (err) {
                 console.log(err);
+                handleMessageError("មានកំហុសពេលលុប!");
             }
         };
 
-
-
         // Add qty modal
         const handleAddQtyModal = (rewardTypeId, item) => {
-            
             currentComponent.value = 'AddRewardQtyModal';
             rewardTypesId.value = rewardTypeId;
             itemQty.value = item;
